@@ -10,17 +10,6 @@ user_time = datetime.strptime(user_time_str, '%Y-%m-%d %H:%M:%S')
 
 alert = "no alert"
 
-
-
-# # 雨量站
-# rainstation_api = "https://fhy.wra.gov.tw/WraApi/v1/Rain/Station"
-# station_info = requests.get(rainstation_api).json()
-# # print(station_info)
-# for station in station_info:
-#     city = station["CityCode"]
-#     if user_town == city:
-#         return 
-
 # 水位警示
 water_warning_api = "https://fhy.wra.gov.tw/WraApi/v1/Water/Warning"
 water_info = requests.get(water_warning_api).json()
