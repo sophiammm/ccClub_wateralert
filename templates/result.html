@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+</head>
+
+<body>
+    <h1>Result page</h1>
+    <div>
+        <table>
+            <tr>
+                <th>CityCode</th>
+                <th>WarningLevel1</th>
+                <th>WarningLevel2</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>StationNo</th>
+                <th>StationName</th>
+                <th>BasinNo</th>
+                <th>BasinName</th>
+            </tr>
+            {% for water_station in water_stations %}
+            <tr>
+                <td>{{ water_station['CityCode']}}</td>
+                <td>{{ water_station['WarningLevel1']}}</td>
+                <td>{{ water_station['WarningLevel2']}}</td>
+                <td>{{ water_station['Latitude']}}</td>
+                <td>{{ water_station['Longitude']}}</td>
+                <td>{{ water_station['StationNo']}}</td>
+                <td>{{ water_station['StationName']}}</td>
+                <td>{{ water_station['BasinNo']}}</td>
+                <td>{{ water_station['BasinName']}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+</html>
