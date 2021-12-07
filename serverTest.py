@@ -1,7 +1,19 @@
-from os import name
 import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_apscheduler import APScheduler
+
+
+# set configuration values
+class Config:
+    SCHEDULER_API_ENABLED = True
+    SCHEDULER_TIMEZONE = "Asia/Taipei"  # <========== 設置時區, 時區不一致可能會導致任務時間出錯
+
+
+# init server
+app = Flask(__name__)
+app.config.from_object(Config())
+app.config['DEBUG'] = True
 
 
 def cityNameToCode(s):
@@ -25,11 +37,6 @@ def get_water_realtime(StationNo):
     return re
 
 
-# init server
-app = Flask(__name__)
-app.config['DEBUG'] = True
-
-
 # initial route
 @app.route('/', methods=['GET'])
 def index():
@@ -42,7 +49,7 @@ def search_get():
     return render_template("search.html")
 
 
-@app.route("/search/result", methods=['POST'])
+@app.route("/result", methods=['POST'])
 def search_request():
     if request.method == 'POST':
         city = request.values["city"]
@@ -52,21 +59,20 @@ def search_request():
 
 
 if __name__ == "__main__":
-    app.run()
 
+    # initialize scheduler
+    scheduler = APScheduler()
 
-# @app.route("/search/<city>", methods=['GET'])
-# def search_result(water_stations):
+    # Add task
+    @scheduler.task('interval', id='do_job_1', seconds=3, misfire_grace_time=900)
+    def job1():
+        print('Job 1 executed')
 
+    # if you don't wanna use a config, you can set options here:
+    # scheduler.api_enabled = True
+    scheduler.init_app(app)
 
-# water_station_basic = get_water_station_basic()
-# water_realtime = get_water_realtime()
-#current_time = datetime.today()
-# for i in water_station_basic:
-#     try:
-#         if "新北市" in i["Address"]:
-#             print(i)
-#     except:
-#         continue
-# print(water_realtime)
-# print(len(water_realtime))
+    scheduler.start()
+
+    # In debug mode, Flask's reloader will load the flask app twice
+    app.run(use_reloader=False)
