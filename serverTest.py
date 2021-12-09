@@ -2,6 +2,52 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
+import psycopg2
+import os
+from dotenv import load_dotenv
+
+
+# basic operation of SQL
+class PostgresBaseManager:
+
+    def __init__(self):
+        # 讀取環境變數
+        load_dotenv(dotenv_path='.env', override=True)
+        self.database = os.getenv("DATABASE")
+        self.user = os.getenv("USER")
+        self.password = os.getenv("PASSWORD")
+        self.host = os.getenv("HOST")
+        self.port = os.getenv("PORT")
+        self.conn = self.connectServer()
+
+    def connectServer(self):
+        """
+        :return: 連接 Heroku Postgres SQL 認證用
+        """
+        conn = psycopg2.connect(
+            database=self.database,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port)
+        return conn
+
+    def closeConnection(self):
+        """
+        :return: 關閉資料庫連線使用
+        """
+        self.conn.close()
+
+    def testServer(self):
+        """
+        :return: 測試是否可以連線到 Heroku Postgres SQL
+        """
+        cur = self.conn.cursor()
+        cur.execute('SELECT VERSION()')
+        results = cur.fetchall()
+        print("Database version : {0} ".format(results))
+        self.conn.commit()
+        cur.close()
 
 
 # set configuration values
@@ -13,16 +59,47 @@ class Config:
 # init server
 app = Flask(__name__)
 app.config.from_object(Config())
+# 測試階段先開啟DEBUG, 正式運行要關掉
 app.config['DEBUG'] = True
 
 
-def cityNameToCode(s):
-    url = f"https://fhy.wra.gov.tw/WraApi/v1/Basic/City?$filter=CityName_Ch%20eq%20'{s}'"
+# functions to get data from wra api
+def cityNameToCodeAndEn(cityCN):
+    url = f"https://fhy.wra.gov.tw/WraApi/v1/Basic/City?$filter=CityName_Ch%20eq%20'{cityCN}'"
     re = requests.get(url).json()
-    return re[0]["CityCode"]
+    return {"code": re[0]["CityCode"], "en": re[0]["CityName_En"]}
 
 
-def get_water_station_basic(CityCode=""):
+def townNameToCode(cityEn, town):
+    url = f"https://fhy.wra.gov.tw/WraApi/v1/Basic/{cityEn}/Town?$filter=TownName%20eq%20'{town}'"
+    re = requests.get(url).json()
+    try:
+        result = re[0]["TownCode"]
+    except:
+        result = "No Data"
+    return result
+
+
+def getWaterWarning(cityCode):
+    url = f"https://fhy.wra.gov.tw/WraApi/v1/Water/Warning?$filter=CityCode%20eq%20'{cityCode}'"
+    re = requests.get(url).json()
+    if re != []:
+        result = re
+    else:
+        result = "No warning."
+    return result
+
+
+def getWaterStationTown(town=""):
+    if town == "":
+        url = "https://fhy.wra.gov.tw/WraApi/v1/Water/Station"
+    else:
+        url = f"https://fhy.wra.gov.tw/WraApi/v1/Water/Station?$filter=contains(Address%2C'{town}')"
+    re = requests.get(url).json()
+    return re
+
+
+def getWaterStationCity(CityCode=""):
     if CityCode == "":
         url = "https://fhy.wra.gov.tw/WraApi/v1/Water/Station"
     else:
@@ -31,7 +108,7 @@ def get_water_station_basic(CityCode=""):
     return re
 
 
-def get_water_realtime(StationNo):
+def getWaterRealtime(StationNo):
     re = requests.get(
         "https://fhy.wra.gov.tw/WraApi/v1/Water/RealTimeInfo").json()
     return re
@@ -53,26 +130,39 @@ def search_get():
 def search_request():
     if request.method == 'POST':
         city = request.values["city"]
-        citycode = cityNameToCode(city)
-        water_stations = get_water_station_basic(citycode)
+        citycode = cityNameToCodeAndEn(city)["code"]
+        water_stations = getWaterStationCity(citycode)
         return render_template("result.html", water_stations=water_stations)
 
 
 if __name__ == "__main__":
 
-    # initialize scheduler
-    scheduler = APScheduler()
+    # # initialize scheduler
+    # scheduler = APScheduler()
 
-    # Add task
-    @scheduler.task('interval', id='do_job_1', seconds=3, misfire_grace_time=900)
-    def job1():
-        print('Job 1 executed')
+    # # Add task
+    # @scheduler.task('interval', id='do_job_1', seconds=3, misfire_grace_time=900)
+    # def job1():
+    #     print('Job 1 executed')
 
-    # if you don't wanna use a config, you can set options here:
-    # scheduler.api_enabled = True
-    scheduler.init_app(app)
+    # # if you don't wanna use a config, you can set options here:
+    # # scheduler.api_enabled = True
+    # scheduler.init_app(app)
 
-    scheduler.start()
+    # scheduler.start()
 
     # In debug mode, Flask's reloader will load the flask app twice
-    app.run(use_reloader=False)
+    # app.run(use_reloader=False)
+
+    # # # 測試DB連線是否正常
+    # # postgres_manager = PostgresBaseManager()
+    # # postgres_manager.testServer()
+    # # postgres_manager.closeConnection()
+
+    # Get data from WRA API test
+    city = cityNameToCodeAndEn("新北市")
+    cityCode = city["code"]
+    cityEn = city["en"]
+    town = "汐止區"
+    print(getWaterWarning(cityCode))
+    print(getWaterStationTown(town))
