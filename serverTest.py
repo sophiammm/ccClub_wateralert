@@ -55,11 +55,15 @@ class PostgresBaseManager:
         """
         para = (arg["code"], arg["ch"], arg["en"])
         cur = self.conn.cursor()
-        cur.execute(
-            'INSERT INTO basic (CityCode, CityName_Ch, CityName_En) VALUES (%s, %s, %s)', para)
-        self.conn.commit()
-        print("Data has been saved.")
-        cur.close()
+        try:
+            cur.execute(
+                'INSERT INTO basic (CityCode, CityName_Ch, CityName_En) VALUES (%s, %s, %s)', para)
+            self.conn.commit()
+            print("Data has been saved successfully.")
+        except:
+            print("Data already exists. Cannot been saved again. ")
+        finally:
+            cur.close()
 
 
 # CRUD operation of SQL
@@ -163,25 +167,25 @@ def showWarn():
 
 if __name__ == "__main__":
 
-    # # initialize scheduler
-    # scheduler = APScheduler()
+    # initialize scheduler
+    scheduler = APScheduler()
 
-    # # Add task
-    # @scheduler.task('interval', id='do_job_1', seconds=60, misfire_grace_time=900)
-    # def job1():
-    #     print('Job 1 executed')
-    #     showWarn()
+    # Add task
+    @scheduler.task('interval', id='do_job_1', seconds=5, misfire_grace_time=900)
+    def job1():
+        print('Job 1 executed')
+        showWarn()
 
-    # # if you don't wanna use a config, you can set options here:
-    # # scheduler.api_enabled = True
-    # scheduler.init_app(app)
+    # if you don't wanna use a config, you can set options here:
+    # scheduler.api_enabled = True
+    scheduler.init_app(app)
 
-    # scheduler.start()
+    scheduler.start()
 
-    # # In debug mode, Flask's reloader will load the flask app twice
-    # app.run(use_reloader=False)
+    # In debug mode, Flask's reloader will load the flask app twice
+    app.run(use_reloader=False)
 
-    # # 測試將API資料存進DB
+    # 測試將API資料存進DB
     postgres_manager = PostgresBaseManager()
     arg = cityNameToCodeAndEn(input("城市名:"))
     print(arg)
