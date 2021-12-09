@@ -49,6 +49,22 @@ class PostgresBaseManager:
         self.conn.commit()
         cur.close()
 
+    def testInsert(self, arg):
+        """
+        :retrun: 測試新增資料進指定table
+        """
+        para = (arg["code"], arg["ch"], arg["en"])
+        cur = self.conn.cursor()
+        cur.execute(
+            'INSERT INTO basic (CityCode, CityName_Ch, CityName_En) VALUES (%s, %s, %s)', para)
+        self.conn.commit()
+        print("Data has been saved.")
+        cur.close()
+
+
+# CRUD operation of SQL
+# Create Read Update Delete
+
 
 # set configuration values
 class Config:
@@ -67,7 +83,7 @@ app.config['DEBUG'] = True
 def cityNameToCodeAndEn(cityCN):
     url = f"https://fhy.wra.gov.tw/WraApi/v1/Basic/City?$filter=CityName_Ch%20eq%20'{cityCN}'"
     re = requests.get(url).json()
-    return {"code": re[0]["CityCode"], "en": re[0]["CityName_En"]}
+    return {"code": re[0]["CityCode"], "en": re[0]["CityName_En"], "ch": re[0]["CityName_Ch"]}
 
 
 def townNameToCode(cityEn, town):
@@ -115,18 +131,18 @@ def getWaterRealtime(StationNo):
 
 
 # initial route
-@app.route('/', methods=['GET'])
+@ app.route('/', methods=['GET'])
 def index():
     return render_template("index.html")
 
 
 # search route
-@app.route('/search', methods=['GET'])
+@ app.route('/search', methods=['GET'])
 def search_get():
     return render_template("search.html")
 
 
-@app.route("/result", methods=['POST'])
+@ app.route("/result", methods=['POST'])
 def search_request():
     if request.method == 'POST':
         city = request.values["city"]
@@ -135,30 +151,7 @@ def search_request():
         return render_template("result.html", water_stations=water_stations)
 
 
-if __name__ == "__main__":
-
-    # # initialize scheduler
-    # scheduler = APScheduler()
-
-    # # Add task
-    # @scheduler.task('interval', id='do_job_1', seconds=3, misfire_grace_time=900)
-    # def job1():
-    #     print('Job 1 executed')
-
-    # # if you don't wanna use a config, you can set options here:
-    # # scheduler.api_enabled = True
-    # scheduler.init_app(app)
-
-    # scheduler.start()
-
-    # In debug mode, Flask's reloader will load the flask app twice
-    # app.run(use_reloader=False)
-
-    # # # 測試DB連線是否正常
-    # # postgres_manager = PostgresBaseManager()
-    # # postgres_manager.testServer()
-    # # postgres_manager.closeConnection()
-
+def showWarn():
     # Get data from WRA API test
     city = cityNameToCodeAndEn("新北市")
     cityCode = city["code"]
@@ -166,3 +159,31 @@ if __name__ == "__main__":
     town = "汐止區"
     print(getWaterWarning(cityCode))
     print(getWaterStationTown(town))
+
+
+if __name__ == "__main__":
+
+    # # initialize scheduler
+    # scheduler = APScheduler()
+
+    # # Add task
+    # @scheduler.task('interval', id='do_job_1', seconds=60, misfire_grace_time=900)
+    # def job1():
+    #     print('Job 1 executed')
+    #     showWarn()
+
+    # # if you don't wanna use a config, you can set options here:
+    # # scheduler.api_enabled = True
+    # scheduler.init_app(app)
+
+    # scheduler.start()
+
+    # # In debug mode, Flask's reloader will load the flask app twice
+    # app.run(use_reloader=False)
+
+    # # 測試將API資料存進DB
+    postgres_manager = PostgresBaseManager()
+    arg = cityNameToCodeAndEn(input("城市名:"))
+    print(arg)
+    postgres_manager.testInsert(arg)
+    postgres_manager.closeConnection()
