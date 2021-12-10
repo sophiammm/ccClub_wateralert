@@ -49,6 +49,7 @@ class PostgresBaseManager:
         self.conn.commit()
         cur.close()
 
+    # 待改寫
     def testInsert(self, arg):
         """
         :retrun: 測試新增資料進指定table
@@ -62,6 +63,69 @@ class PostgresBaseManager:
             print("Data has been saved successfully.")
         except:
             print("Data already exists. Cannot been saved again. ")
+        finally:
+            cur.close()
+
+    def testUpdate(self, target, correct, condition):
+        """
+        :return: 測試更新資料進指定table
+        """
+        cur = self.conn.cursor()
+        try:
+            # 另一種格式化寫法
+            # 需要注意SQL語法, SQL語法裡有''的地方還是要加上去
+            cur.execute(
+                f"UPDATE basic SET {target} = '{correct}' WHERE {condition[0]} = '{condition[1]}'")
+            self.conn.commit()
+            print("Data has been updated successfully.")
+        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
+        except Exception as e:
+            print("Update failed.")
+            print(e)
+        finally:
+            cur.close()
+
+    def testRead(self, table):
+        """
+        :return: 測試指定table讀取資料
+        暫時不弄成以表格呈現
+        """
+        cur = self.conn.cursor()
+        try:
+            cur.execute(
+                f"SELECT * FROM {table}")
+            # Retrieve all rows from the PostgreSQL table
+            results = cur.fetchall()
+            self.conn.commit()
+            # Print each row and it's columns values
+            for row in results:
+                print(f"CityCode: {row[0]}")
+                print(f"CityName_Ch: {row[1]}")
+                print(f"CityName_En: {row[2]}", "\n")
+
+        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
+        except Exception as e:
+            print("Read failed.")
+            print(e)
+        finally:
+            cur.close()
+
+    def testDelete(self, table, condition):
+        """
+        :return: 測試指定table讀取資料
+        暫時不弄成以表格呈現
+        """
+        cur = self.conn.cursor()
+        try:
+            cur.execute(
+                f"DELETE FROM {table} WHERE {condition[0]} = '{condition[1]}'")
+            self.conn.commit()
+            print("Data has been deleted successfully.")
+
+        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
+        except Exception as e:
+            print("Delete failed.")
+            print(e)
         finally:
             cur.close()
 
@@ -167,27 +231,47 @@ def showWarn():
 
 if __name__ == "__main__":
 
-    # initialize scheduler
-    scheduler = APScheduler()
+    # # initialize scheduler
+    # scheduler = APScheduler()
 
-    # Add task
-    @scheduler.task('interval', id='do_job_1', seconds=5, misfire_grace_time=900)
-    def job1():
-        print('Job 1 executed')
-        showWarn()
+    # # Add task
+    # @scheduler.task('interval', id='do_job_1', seconds=5, misfire_grace_time=900)
+    # def job1():
+    #     print('Job 1 executed')
+    #     showWarn()
 
-    # if you don't wanna use a config, you can set options here:
-    # scheduler.api_enabled = True
-    scheduler.init_app(app)
+    # # if you don't wanna use a config, you can set options here:
+    # # scheduler.api_enabled = True
+    # scheduler.init_app(app)
 
-    scheduler.start()
+    # scheduler.start()
 
-    # In debug mode, Flask's reloader will load the flask app twice
-    app.run(use_reloader=False)
+    # # In debug mode, Flask's reloader will load the flask app twice
+    # app.run(use_reloader=False)
 
-    # 測試將API資料存進DB
+    # DB測試
+    # 連線以及執行DB Manager
     postgres_manager = PostgresBaseManager()
-    arg = cityNameToCodeAndEn(input("城市名:"))
-    print(arg)
-    postgres_manager.testInsert(arg)
+
+    # # 測試將API資料存進DB
+    # arg = cityNameToCodeAndEn(input("城市名:"))
+    # print(arg)
+    # postgres_manager.testInsert(arg)
+
+    # # 測試UPDATE
+    # target = 'CityName_Ch'
+    # correct = '宜蘭縣'
+    # condition = ['CityCode', '10002']
+    # postgres_manager.testUpdate(target, correct, condition)
+
+    # # 測試READ
+    # table = "basic"
+    # postgres_manager.testRead(table)
+
+    # 測試DELETE
+    table = "basic"
+    condition = ['CityCode', '10002']
+    postgres_manager.testDelete(table, condition)
+
+    # 中斷DB連線
     postgres_manager.closeConnection()
