@@ -21,14 +21,15 @@ def callback():
         return "Hello Heroku"
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
-        body = request.get_data(as_text=True)
+        body = request.body.decode('utf-8') #request.get_data(as_text=True)
 
-        try:
-            handler.handle(body, signature)
-        except InvalidSignatureError:
-            abort(400)
+        # try:
+        #     handler.handle(body, signature)
+        # except InvalidSignatureError:
+        #     abort(400)
 
-        return "OK"
+        # return "OK"
+        print(body)
 
 
 @handler.add(MessageEvent, message=TextMessage)
