@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warn</title>
+</head>
+
+<body>
+    <h1>Warn page</h1>
+    <div>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Station No</th>
+                <th>Town Code</th>
+                <th>Update Time</th>
+                <th>Warning Level</th>
+                <th>Next Spill Time</th>
+            </tr>
+            {% block content %}
+            {% if waterWarns != [] %}
+            {% for waterWarn in waterWarns %}
+            <tr>
+                <td>Water</td>
+                <td>{{ waterWarn['stationNo']}}</td>
+                <td>{{ waterWarn['townCode']}}</td>
+                <td>{{ waterWarn['APIupdateTime']}}</td>
+                <td>{{ waterWarn['warningLevel']}}</td>
+                <td>Null</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td>Water</td>
+                <td colspan="5">No Warn</td>
+            </tr>
+            {% endif %}
+            <br>
+            <br>
+            {% if rainWarns != [] %}
+            {% for rainWarn in rainWarns %}
+            <tr>
+                <td>Rain</td>
+                <td>{{ rainWarn['stationNo']}}</td>
+                <td>{{ rainWarn['townCode']}}</td>
+                <td>{{ rainWarn['APIupdateTime']}}</td>
+                <td>{{ rainWarn['warningLevel']}}</td>
+                <td>Null</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td>Rain</td>
+                <td colspan="5">No Warn</td>
+            </tr>
+            {% endif %}
+            <br>
+            <br>
+            {% if rainWarns != [] %}
+            {% for rainWarn in rainWarns %}
+            <tr>
+                <td>Reservoir</td>
+                <td>{{ reservoirWarn['stationNo']}}</td>
+                <td>{{ reservoirWarn['townCode']}}</td>
+                <td>{{ reservoirWarn['APIupdateTime']}}</td>
+                <td>Null</td>
+                <td>{{ reservoirWarn['NextSpillTime']}}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td>Reservoir</td>
+                <td colspan="5">No Warn</td>
+            </tr>
+            {% endif %}
+            {% endblock content %}
+        </table>
+    </div>
+</body>
+
+</html>

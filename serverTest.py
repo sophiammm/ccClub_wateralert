@@ -2,136 +2,10 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
-import psycopg2
-import os
-from dotenv import load_dotenv
-
-
-# basic operation of SQL
-class PostgresBaseManager:
-
-    def __init__(self):
-        # 讀取環境變數
-        load_dotenv(dotenv_path='.env', override=True)
-        self.database = os.getenv("DATABASE")
-        self.user = os.getenv("USER")
-        self.password = os.getenv("PASSWORD")
-        self.host = os.getenv("HOST")
-        self.port = os.getenv("PORT")
-        self.conn = self.connectServer()
-
-    def connectServer(self):
-        """
-        :return: 連接 Heroku Postgres SQL 認證用
-        """
-        conn = psycopg2.connect(
-            database=self.database,
-            user=self.user,
-            password=self.password,
-            host=self.host,
-            port=self.port)
-        return conn
-
-    def closeConnection(self):
-        """
-        :return: 關閉資料庫連線使用
-        """
-        self.conn.close()
-
-    def testServer(self):
-        """
-        :return: 測試是否可以連線到 Heroku Postgres SQL
-        """
-        cur = self.conn.cursor()
-        cur.execute('SELECT VERSION()')
-        results = cur.fetchall()
-        print("Database version : {0} ".format(results))
-        self.conn.commit()
-        cur.close()
-
-    # 待改寫
-    def testInsert(self, arg):
-        """
-        :retrun: 測試新增資料進指定table
-        """
-        para = (arg["code"], arg["ch"], arg["en"])
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                'INSERT INTO basic (CityCode, CityName_Ch, CityName_En) VALUES (%s, %s, %s)', para)
-            self.conn.commit()
-            print("Data has been saved successfully.")
-        except:
-            print("Data already exists. Cannot been saved again. ")
-        finally:
-            cur.close()
-
-    def testUpdate(self, target, correct, condition):
-        """
-        :return: 測試更新資料進指定table
-        """
-        cur = self.conn.cursor()
-        try:
-            # 另一種格式化寫法
-            # 需要注意SQL語法, SQL語法裡有''的地方還是要加上去
-            cur.execute(
-                f"UPDATE basic SET {target} = '{correct}' WHERE {condition[0]} = '{condition[1]}'")
-            self.conn.commit()
-            print("Data has been updated successfully.")
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Update failed.")
-            print(e)
-        finally:
-            cur.close()
-
-    def testRead(self, table):
-        """
-        :return: 測試指定table讀取資料
-        暫時不弄成以表格呈現
-        """
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                f"SELECT * FROM {table}")
-            # Retrieve all rows from the PostgreSQL table
-            results = cur.fetchall()
-            self.conn.commit()
-            # Print each row and it's columns values
-            for row in results:
-                print(f"CityCode: {row[0]}")
-                print(f"CityName_Ch: {row[1]}")
-                print(f"CityName_En: {row[2]}", "\n")
-
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Read failed.")
-            print(e)
-        finally:
-            cur.close()
-
-    def testDelete(self, table, condition):
-        """
-        :return: 測試指定table讀取資料
-        暫時不弄成以表格呈現
-        """
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                f"DELETE FROM {table} WHERE {condition[0]} = '{condition[1]}'")
-            self.conn.commit()
-            print("Data has been deleted successfully.")
-
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Delete failed.")
-            print(e)
-        finally:
-            cur.close()
-
-
-# CRUD operation of SQL
-# Create Read Update Delete
+from DB_basic import PostgresBaseManager
+from DB_init import saveWaterWarningData, saveRainWarningData, saveReservoirWarningData, truncateTable
+from DB_read import getWarn
+from timestamp import stampToDate
 
 
 # set configuration values
@@ -219,6 +93,24 @@ def search_request():
         return render_template("result.html", water_stations=water_stations)
 
 
+# check warn route
+@ app.route("/warn", methods=['GET'])
+def warn_get():
+    waterWarns = getWarn("Water_Warning")
+    for waterWarn in waterWarns:
+        waterWarn["APIupdateTime"] = stampToDate(waterWarn["APIupdateTime"])
+    rainWarns = getWarn("Rain_Warning")
+    for rainWarn in rainWarns:
+        rainWarn["APIupdateTime"] = stampToDate(rainWarn["APIupdateTime"])
+    reservoirWarns = getWarn("Reservoir_Warning")
+    for reservoirWarn in reservoirWarns:
+        reservoirWarn["APIupdateTime"] = stampToDate(
+            reservoirWarn["APIupdateTime"])
+        reservoirWarns["NextSpillTime"] = stampToDate(
+            reservoirWarns["NextSpillTime"])
+    return render_template("warn.html", waterWarns=waterWarns, rainWarns=rainWarns, reservoirWarns=reservoirWarns)
+
+
 def showWarn():
     # Get data from WRA API test
     city = cityNameToCodeAndEn("新北市")
@@ -235,10 +127,15 @@ if __name__ == "__main__":
     # scheduler = APScheduler()
 
     # # Add task
-    # @scheduler.task('interval', id='do_job_1', seconds=5, misfire_grace_time=900)
+    # @scheduler.task('interval', id='do_job_1', seconds=30, misfire_grace_time=900)
     # def job1():
     #     print('Job 1 executed')
-    #     showWarn()
+    #     truncateTable("Rain_Warning")
+    #     truncateTable("Water_Warning")
+    #     truncateTable("Reservoir_Warning")
+    #     saveRainWarningData()
+    #     saveWaterWarningData()
+    #     saveReservoirWarningData()
 
     # # if you don't wanna use a config, you can set options here:
     # # scheduler.api_enabled = True
@@ -246,12 +143,12 @@ if __name__ == "__main__":
 
     # scheduler.start()
 
-    # # In debug mode, Flask's reloader will load the flask app twice
-    # app.run(use_reloader=False)
+    # In debug mode, Flask's reloader will load the flask app twice
+    app.run(use_reloader=False)
 
     # DB測試
     # 連線以及執行DB Manager
-    postgres_manager = PostgresBaseManager()
+    # postgres_manager = PostgresBaseManager()
 
     # # 測試將API資料存進DB
     # arg = cityNameToCodeAndEn(input("城市名:"))
@@ -268,10 +165,10 @@ if __name__ == "__main__":
     # table = "basic"
     # postgres_manager.testRead(table)
 
-    # 測試DELETE
-    table = "basic"
-    condition = ['CityCode', '10002']
-    postgres_manager.testDelete(table, condition)
+    # # 測試DELETE
+    # table = "basic"
+    # condition = ['CityCode', '10002']
+    # postgres_manager.testDelete(table, condition)
 
     # 中斷DB連線
-    postgres_manager.closeConnection()
+    # postgres_manager.closeConnection()
