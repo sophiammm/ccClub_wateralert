@@ -15,26 +15,6 @@
             "description": "LINE bot Channel secret",
             "required": true
         },
-        "DATABASE_sql": {
-            "description": "DB connection info",
-            "required": true
-        },
-        "USER_sql": {
-            "description": "DB connection info",
-            "required": true
-        },
-        "PASSWORD_sql": {
-            "description": "DB connection info",
-            "required": true
-        },
-        "HOST_sql": {
-            "description": "DB connection info",
-            "required": true
-        },
-        "PORT_sql": {
-            "description": "DB connection info",
-            "required": true
-        },
         "DATABASE_URL": {
             "description": "DB connection info",
             "required": true

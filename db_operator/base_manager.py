@@ -19,7 +19,7 @@ class PostgresBaseManager:
 
     def __init__(self):
         # 讀取環境變數
-        url = urlparse.urlparse(os.environ['DATABASE_URL'])
+        url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
         self.database = url.path[1:]
         self.user = url.username
         self.password = url.password
