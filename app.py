@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 from flask import Flask, abort, request
-from db_operator.read_from_db import read_city
 
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
