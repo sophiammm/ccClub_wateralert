@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from flask import Flask, abort, request
-from gps_address import address_to_gps
+from db_operator.read_from_db import read_city
 
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
@@ -20,7 +20,7 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return str(address_to_gps("新北市")[0])
+        return str(read_city()[0][1])
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
