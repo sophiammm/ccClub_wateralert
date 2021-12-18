@@ -20,7 +20,11 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return str(read_city()[0][1])
+        try:
+            result = str(read_city()[0][1])
+        except Exception as e:
+            result = str(e)
+        return result
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
