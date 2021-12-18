@@ -1,6 +1,6 @@
 import psycopg2
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 
 # basic operation of SQL
@@ -8,12 +8,12 @@ class PostgresBaseManager:
 
     def __init__(self):
         # 讀取環境變數
-        load_dotenv(dotenv_path='.env', override=True)
-        self.database = os.getenv("DATABASE")
-        self.user = os.getenv("USER")
-        self.password = os.getenv("PASSWORD")
-        self.host = os.getenv("HOST")
-        self.port = os.getenv("PORT")
+        # load_dotenv(dotenv_path='.env', override=True)
+        self.database = os.environ.get("DATABASE_sql")
+        self.user = os.environ.get("USER_sql")
+        self.password = os.environ.get("PASSWORD_sql")
+        self.host = os.environ.get("HOST_sql")
+        self.port = os.environ.get("PORT_sql")
         self.conn = self.connect_server()
 
     def connect_server(self):
