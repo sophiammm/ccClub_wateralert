@@ -2,10 +2,10 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
-from DB_basic import PostgresBaseManager
-from DB_init import saveWaterWarningData, saveRainWarningData, saveReservoirWarningData, truncateTable
-from DB_read import getWarn
-from timestamp import stampToDate
+from db_operator.base_manager import PostgresBaseManager
+from db_operator.save_from_wra import save_reservoir_warning, save_rain_warning, save_water_warning, truncate_table
+from db_operator.read_from_db import read_db
+from timestamp import stamp_to_date
 
 
 # set configuration values
@@ -96,79 +96,52 @@ def search_request():
 # check warn route
 @ app.route("/warn", methods=['GET'])
 def warn_get():
-    waterWarns = getWarn("Water_Warning")
+    waterWarns = read_db("Water_Warning")
     for waterWarn in waterWarns:
-        waterWarn["APIupdateTime"] = stampToDate(waterWarn["APIupdateTime"])
-    rainWarns = getWarn("Rain_Warning")
+        waterWarn["APIupdateTime"] = stamp_to_date(waterWarn["APIupdateTime"])
+    rainWarns = read_db("Rain_Warning")
     for rainWarn in rainWarns:
-        rainWarn["APIupdateTime"] = stampToDate(rainWarn["APIupdateTime"])
-    reservoirWarns = getWarn("Reservoir_Warning")
+        rainWarn["APIupdateTime"] = stamp_to_date(rainWarn["APIupdateTime"])
+    reservoirWarns = read_db("Reservoir_Warning")
     for reservoirWarn in reservoirWarns:
-        reservoirWarn["APIupdateTime"] = stampToDate(
+        reservoirWarn["APIupdateTime"] = stamp_to_date(
             reservoirWarn["APIupdateTime"])
-        reservoirWarns["NextSpillTime"] = stampToDate(
+        reservoirWarns["NextSpillTime"] = stamp_to_date(
             reservoirWarns["NextSpillTime"])
     return render_template("warn.html", waterWarns=waterWarns, rainWarns=rainWarns, reservoirWarns=reservoirWarns)
 
 
-def showWarn():
-    # Get data from WRA API test
-    city = cityNameToCodeAndEn("新北市")
-    cityCode = city["code"]
-    cityEn = city["en"]
-    town = "汐止區"
-    print(getWaterWarning(cityCode))
-    print(getWaterStationTown(town))
+# def showWarn():
+#     # Get data from WRA API test
+#     city = cityNameToCodeAndEn("新北市")
+#     cityCode = city["code"]
+#     cityEn = city["en"]
+#     town = "汐止區"
+#     print(getWaterWarning(cityCode))
+#     print(getWaterStationTown(town))
 
 
 if __name__ == "__main__":
 
-    # # initialize scheduler
-    # scheduler = APScheduler()
+    # initialize scheduler
+    scheduler = APScheduler()
 
-    # # Add task
-    # @scheduler.task('interval', id='do_job_1', seconds=30, misfire_grace_time=900)
-    # def job1():
-    #     print('Job 1 executed')
-    #     truncateTable("Rain_Warning")
-    #     truncateTable("Water_Warning")
-    #     truncateTable("Reservoir_Warning")
-    #     saveRainWarningData()
-    #     saveWaterWarningData()
-    #     saveReservoirWarningData()
+    # Add task
+    @scheduler.task('interval', id='save_warn', seconds=10, misfire_grace_time=900)
+    def save_warn_from_wra():
+        print('Job 1 executed')
+        truncate_table("Rain_Warning")
+        truncate_table("Water_Warning")
+        truncate_table("Reservoir_Warning")
+        save_rain_warning()
+        save_water_warning()
+        save_reservoir_warning()
 
-    # # if you don't wanna use a config, you can set options here:
-    # # scheduler.api_enabled = True
-    # scheduler.init_app(app)
+    # if you don't wanna use a config, you can set options here:
+    # scheduler.api_enabled = True
+    scheduler.init_app(app)
 
-    # scheduler.start()
+    scheduler.start()
 
     # In debug mode, Flask's reloader will load the flask app twice
     app.run(use_reloader=False)
-
-    # DB測試
-    # 連線以及執行DB Manager
-    # postgres_manager = PostgresBaseManager()
-
-    # # 測試將API資料存進DB
-    # arg = cityNameToCodeAndEn(input("城市名:"))
-    # print(arg)
-    # postgres_manager.testInsert(arg)
-
-    # # 測試UPDATE
-    # target = 'CityName_Ch'
-    # correct = '宜蘭縣'
-    # condition = ['CityCode', '10002']
-    # postgres_manager.testUpdate(target, correct, condition)
-
-    # # 測試READ
-    # table = "basic"
-    # postgres_manager.testRead(table)
-
-    # # 測試DELETE
-    # table = "basic"
-    # condition = ['CityCode', '10002']
-    # postgres_manager.testDelete(table, condition)
-
-    # 中斷DB連線
-    # postgres_manager.closeConnection()

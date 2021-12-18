@@ -14,9 +14,9 @@ class PostgresBaseManager:
         self.password = os.getenv("PASSWORD")
         self.host = os.getenv("HOST")
         self.port = os.getenv("PORT")
-        self.conn = self.connectServer()
+        self.conn = self.connect_server()
 
-    def connectServer(self):
+    def connect_server(self):
         """
         :return: 連接 Heroku Postgres SQL 認證用
         """
@@ -28,13 +28,13 @@ class PostgresBaseManager:
             port=self.port)
         return conn
 
-    def closeConnection(self):
+    def close_connection(self):
         """
         :return: 關閉資料庫連線使用
         """
         self.conn.close()
 
-    def testServer(self):
+    def test_server(self):
         """
         :return: 測試是否可以連線到 Heroku Postgres SQL
         """
@@ -126,5 +126,7 @@ class PostgresBaseManager:
             cur.close()
 
 
-# CRUD operation of SQL
-# Create Read Update Delete
+if __name__ == "__main__":
+    postgres_manager = PostgresBaseManager()
+    postgres_manager.test_server()
+    postgres_manager.close_connection()

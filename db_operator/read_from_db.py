@@ -1,7 +1,7 @@
-from DB_basic import PostgresBaseManager
+from db_operator.base_manager import PostgresBaseManager
 
 
-def getWarn(table):
+def read_db(table):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     try:
@@ -16,7 +16,3 @@ def getWarn(table):
     finally:
         cur.close()
         return results
-
-
-if __name__ == "__main__":
-    print(getWarn("Rain_Warning"))
