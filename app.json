@@ -1,15 +1,39 @@
 {
     "name": "echo bot - LINE Messaging API",
     "description": "This is a sample application for the LINE Messaging API",
-    "keywords": ["chatbot", "line", "python"],
+    "keywords": [
+        "chatbot",
+        "line",
+        "python"
+    ],
     "env": {
         "CHANNEL_ACCESS_TOKEN": {
             "description": "LINE bot Channel access token",
-            "required":  true
+            "required": true
         },
         "CHANNEL_SECRET": {
             "description": "LINE bot Channel secret",
-            "required":  true
+            "required": true
+        },
+        "DATABASE_sql": {
+            "description": "DB connection info",
+            "required": true
+        },
+        "USER_sql": {
+            "description": "DB connection info",
+            "required": true
+        },
+        "PASSWORD_sql": {
+            "description": "DB connection info",
+            "required": true
+        },
+        "HOST_sql": {
+            "description": "DB connection info",
+            "required": true
+        },
+        "PORT_sql": {
+            "description": "DB connection info",
+            "required": true
         }
     }
 }
