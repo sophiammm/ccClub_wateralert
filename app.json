@@ -34,6 +34,10 @@
         "PORT_sql": {
             "description": "DB connection info",
             "required": true
+        },
+        "DATABASE_URL": {
+            "description": "DB connection info",
+            "required": true
         }
     }
 }
