@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-
+from gps_address import address_to_gps
 from flask import Flask, abort, request
 
 # https://github.com/line/line-bot-sdk-python
@@ -18,7 +18,7 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return "Hello Heroku"
+        return str(address_to_gps("新北市"))[0]
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
