@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from db_operator.read_from_db import read_rain_by_town, read_water_by_town, read_reservoir_by_town
+from db_operator.read_from_db import read_rain_by_town, read_water_by_town, read_reservoir_by_town, read_townID
 from flask import Flask, abort, request, render_template
 
 # https://github.com/line/line-bot-sdk-python
@@ -42,37 +42,9 @@ def search_get():
 def handle_message_text(event):
     get_message = event.message.text
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
-    # [(data1), (data2), ],[], []
-    re_warns = read_reservoir_by_town()
-    rain_warns = read_rain_by_town()
-    water_warns = read_water_by_town()
-    re_msg = ""
-    rain_msg = ""
-    water_msg = ""
-    for re_warn in re_warns:
-        try:
-            re_msg += f"{re_warn[0]}\n"
-        except:
-            break
-    for rain_warn in rain_warns:
-        try:
-            rain_msg += f"{rain_warn[0]}\n"
-        except:
-            break
-    for water_warn in water_warns:
-        try:
-            water_msg += f"{water_warn[0]}\n"
-        except:
-            break
-    if water_msg != "" or re_msg != "" or rain_msg != "":
-        water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
-    else:
-        water_condition = "指定地區安全"
 
     correct_input = TextSendMessage(
         text="⚠️請輸入欲查詢水情之行政區，共5至7個字。\n例如: 臺北市信義區、桃園市桃園區、臺中市西區、嘉義縣阿里山鄉、南投縣南投市、臺東縣成功鎮。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
-    output = TextSendMessage(
-        text=f"您輸入的是：{get_message}\n此區域的水情狀況：{water_condition}")
 
     if len(get_message) < 5 or len(get_message) > 7:  # 行政區總共5到7個字而已
         reply = correct_input
@@ -83,6 +55,38 @@ def handle_message_text(event):
     elif get_message[-1] != '鄉' and get_message[-1] != '鎮' and get_message[-1] != '市' and get_message[-1] != '區':
         reply = correct_input
     else:
+        address_city = get_message[:3]
+        address_town = get_message[3:]
+        town_id = read_townID(address_city, address_town)[0][0]
+        # [(data1), (data2), ],[], []
+        re_warns = read_reservoir_by_town(town_id)
+        rain_warns = read_rain_by_town(town_id)
+        water_warns = read_water_by_town(town_id)
+        re_msg = ""
+        rain_msg = ""
+        water_msg = ""
+        for re_warn in re_warns:
+            try:
+                re_msg += f"{re_warn[0]}\n"
+            except:
+                break
+        for rain_warn in rain_warns:
+            try:
+                rain_msg += f"{rain_warn[0]}\n"
+            except:
+                break
+        for water_warn in water_warns:
+            try:
+                water_msg += f"{water_warn[0]}\n"
+            except:
+                break
+        if water_msg != "" or re_msg != "" or rain_msg != "":
+            water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
+        else:
+            water_condition = "指定地區安全"
+
+        output = TextSendMessage(
+            text=f"您輸入的是：{get_message}\n此區域的水情狀況：{water_condition}")
         reply = output
 
     # Send To Line
