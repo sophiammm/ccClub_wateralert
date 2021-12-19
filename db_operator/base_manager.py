@@ -1,39 +1,30 @@
 import psycopg2
-# import urllib.parse as urlparse
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 
 # basic operation of SQL
 class PostgresBaseManager:
 
-    # def __init__(self):
-    #     # 讀取環境變數
-    #     load_dotenv(dotenv_path='.env', override=True)
-    #     self.database = os.getenv("DATABASE")
-    #     self.user = os.getenv("USER")
-    #     self.password = os.getenv("PASSWORD")
-    #     self.host = os.getenv("HOST")
-    #     self.port = os.getenv("PORT")
-    #     self.conn = self.connect_server()
-
+    # for local run
     def __init__(self):
         # 讀取環境變數
-        self.database = os.getenv("DATABASE_sql")
-        self.user = os.getenv("USER_sql")
-        self.password = os.getenv("PASSWORD_sql")
-        self.host = os.getenv("HOST_sql")
-        self.port = os.getenv("PORT_sql")
+        load_dotenv(dotenv_path='.env', override=True)
+        self.database = os.getenv("DATABASE")
+        self.user = os.getenv("USER")
+        self.password = os.getenv("PASSWORD")
+        self.host = os.getenv("HOST")
+        self.port = os.getenv("PORT")
         self.conn = self.connect_server()
 
+    # # for server run
     # def __init__(self):
     #     # 讀取環境變數
-    #     url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
-    #     self.database = url.path[1:]
-    #     self.user = url.username
-    #     self.password = url.password
-    #     self.host = url.hostname
-    #     self.port = url.port
+    #     self.database = os.getenv("DATABASE_sql")
+    #     self.user = os.getenv("USER_sql")
+    #     self.password = os.getenv("PASSWORD_sql")
+    #     self.host = os.getenv("HOST_sql")
+    #     self.port = os.getenv("PORT_sql")
     #     self.conn = self.connect_server()
 
     def connect_server(self):
@@ -65,87 +56,8 @@ class PostgresBaseManager:
         self.conn.commit()
         cur.close()
 
-    # 待改寫
-    def testInsert(self, arg):
-        """
-        :retrun: 測試新增資料進指定table
-        """
-        para = (arg["code"], arg["ch"], arg["en"])
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                'INSERT INTO basic (CityCode, CityName_Ch, CityName_En) VALUES (%s, %s, %s)', para)
-            self.conn.commit()
-            print("Data has been saved successfully.")
-        except:
-            print("Data already exists. Cannot been saved again. ")
-        finally:
-            cur.close()
 
-    def testUpdate(self, target, correct, condition):
-        """
-        :return: 測試更新資料進指定table
-        """
-        cur = self.conn.cursor()
-        try:
-            # 另一種格式化寫法
-            # 需要注意SQL語法, SQL語法裡有''的地方還是要加上去
-            cur.execute(
-                f"UPDATE basic SET {target} = '{correct}' WHERE {condition[0]} = '{condition[1]}'")
-            self.conn.commit()
-            print("Data has been updated successfully.")
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Update failed.")
-            print(e)
-        finally:
-            cur.close()
-
-    def testRead(self, table):
-        """
-        :return: 測試指定table讀取資料
-        暫時不弄成以表格呈現
-        """
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                f"SELECT * FROM {table}")
-            # Retrieve all rows from the PostgreSQL table
-            results = cur.fetchall()
-            self.conn.commit()
-            # Print each row and it's columns values
-            for row in results:
-                print(f"CityCode: {row[0]}")
-                print(f"CityName_Ch: {row[1]}")
-                print(f"CityName_En: {row[2]}", "\n")
-
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Read failed.")
-            print(e)
-        finally:
-            cur.close()
-
-    def testDelete(self, table, condition):
-        """
-        :return: 測試指定table讀取資料
-        暫時不弄成以表格呈現
-        """
-        cur = self.conn.cursor()
-        try:
-            cur.execute(
-                f"DELETE FROM {table} WHERE {condition[0]} = '{condition[1]}'")
-            self.conn.commit()
-            print("Data has been deleted successfully.")
-
-        # 若有Error, print出Error資訊的寫法, 方便知道哪裡出錯
-        except Exception as e:
-            print("Delete failed.")
-            print(e)
-        finally:
-            cur.close()
-
-
+# for test
 if __name__ == "__main__":
     postgres_manager = PostgresBaseManager()
     postgres_manager.test_server()
