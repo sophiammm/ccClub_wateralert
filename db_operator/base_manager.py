@@ -1,5 +1,5 @@
 import psycopg2
-import urllib.parse as urlparse
+# import urllib.parse as urlparse
 import os
 # from dotenv import load_dotenv
 
@@ -19,13 +19,22 @@ class PostgresBaseManager:
 
     def __init__(self):
         # 讀取環境變數
-        url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
-        self.database = url.path[1:]
-        self.user = url.username
-        self.password = url.password
-        self.host = url.hostname
-        self.port = url.port
+        self.database = os.getenv("DATABASE_sql")
+        self.user = os.getenv("USER_sql")
+        self.password = os.getenv("PASSWORD_sql")
+        self.host = os.getenv("HOST_sql")
+        self.port = os.getenv("PORT_sql")
         self.conn = self.connect_server()
+
+    # def __init__(self):
+    #     # 讀取環境變數
+    #     url = urlparse.urlparse(os.environ.get('DATABASE_URL'))
+    #     self.database = url.path[1:]
+    #     self.user = url.username
+    #     self.password = url.password
+    #     self.host = url.hostname
+    #     self.port = url.port
+    #     self.conn = self.connect_server()
 
     def connect_server(self):
         """
