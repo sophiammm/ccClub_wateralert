@@ -6,26 +6,26 @@ from dotenv import load_dotenv
 # basic operation of SQL
 class PostgresBaseManager:
 
-    # for local run
-    def __init__(self):
-        # 讀取環境變數
-        load_dotenv(dotenv_path='.env', override=True)
-        self.database = os.getenv("DATABASE")
-        self.user = os.getenv("USER")
-        self.password = os.getenv("PASSWORD")
-        self.host = os.getenv("HOST")
-        self.port = os.getenv("PORT")
-        self.conn = self.connect_server()
-
-    # # for server run
+    # # for local run
     # def __init__(self):
     #     # 讀取環境變數
-    #     self.database = os.getenv("DATABASE_sql")
-    #     self.user = os.getenv("USER_sql")
-    #     self.password = os.getenv("PASSWORD_sql")
-    #     self.host = os.getenv("HOST_sql")
-    #     self.port = os.getenv("PORT_sql")
+    #     load_dotenv(dotenv_path='.env', override=True)
+    #     self.database = os.getenv("DATABASE")
+    #     self.user = os.getenv("USER")
+    #     self.password = os.getenv("PASSWORD")
+    #     self.host = os.getenv("HOST")
+    #     self.port = os.getenv("PORT")
     #     self.conn = self.connect_server()
+
+    # for server run
+    def __init__(self):
+        # 讀取環境變數
+        self.database = os.getenv("DATABASE_sql")
+        self.user = os.getenv("USER_sql")
+        self.password = os.getenv("PASSWORD_sql")
+        self.host = os.getenv("HOST_sql")
+        self.port = os.getenv("PORT_sql")
+        self.conn = self.connect_server()
 
     def connect_server(self):
         """
