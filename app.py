@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-
+from db_operator.test import test
 from flask import Flask, abort, request
 
 # https://github.com/line/line-bot-sdk-python
@@ -19,7 +19,7 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return "abcdef"
+        return test()
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
