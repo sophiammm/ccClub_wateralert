@@ -8,9 +8,9 @@ def create_city_town_table():
     cur.execute(
         """
         CREATE TABLE City_Town (
-            cityID varchar(10),
+            cityCode varchar(10),
             cityName varchar(5),
-            townID varchar(12) PRIMARY key,
+            townCode varchar(12) PRIMARY key,
             townName varchar(5)
         );
         """
@@ -18,10 +18,9 @@ def create_city_town_table():
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
-    print("Operation completed")
 
 
-def create_all_table():
+def create_water_related_table():
     cur.execute(
         """
         CREATE TABLE Rain_Warning (
@@ -37,10 +36,8 @@ def create_all_table():
         """
         CREATE TABLE Rain_Station (
         stationNo varchar(12) PRIMARY key,
-        stationName varchar(10),
         latitude decimal(11,7),
-        longitude decimal(11,7),
-        DBupdateTime int
+        longitude decimal(11,7)
         );
         """
     )
@@ -59,10 +56,8 @@ def create_all_table():
         """
         CREATE TABLE Water_Station (
         stationNo varchar(12) PRIMARY key,
-        stationName varchar(10),
         latitude decimal(11,7),
-        longitude decimal(11,7),
-        DBupdateTime int
+        longitude decimal(11,7)
         );
         """
     )
@@ -73,32 +68,19 @@ def create_all_table():
         townCode varchar(12),
         APIupdateTime int,
         DBupdateTime int,
-        nextSpillTime int
+        nextSpillTime int,
+        status varchar(15)
         );
         """
     )
     cur.execute(
         """
-        CREATE TABLE Reservoir_Station (
-        stationNo varchar(12) PRIMARY key,
-        stationName varchar(10),
-        latitude decimal(11,7),
-        longitude decimal(11,7),
-        DBupdateTime int
-        );
-        """
-    )
-    cur.execute(
-        """
-        CREATE TABLE Reservoir_Affected (
-        stationNo varchar(12) PRIMARY key,
-        cityCode varchar(10),
-        townCode varchar(12),
-        DBupdateTime int
+        CREATE TABLE Reservoir_AffectedArea (
+        stationNo varchar(12),
+        townCode varchar(12)
         );
         """
     )
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
-    print("Operation completed")
