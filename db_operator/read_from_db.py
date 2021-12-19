@@ -52,6 +52,23 @@ def read_town_by_city(city):
         return results
 
 
+def read_townID(city, town):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    try:
+        cur.execute(
+            f"SELECT townID FROM City_Town WHERE cityName='{city}' AND townName='{town}'")
+        # Retrieve all rows from the PostgreSQL table
+        results = cur.fetchall()
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Read failed.")
+        print(e)
+    finally:
+        cur.close()
+        return results
+
+
 def read_rain_by_town(town_id):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
