@@ -15,4 +15,4 @@ def stamp_to_date(stamp: int) -> str:
 
 if __name__ == "__main__":
     cur = datetime.now()
-    date_to_stamp(str(cur))
+    print(date_to_stamp(str(cur)))

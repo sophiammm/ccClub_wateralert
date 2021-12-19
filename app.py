@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
-from db_operator.read_from_db import read_city
-from flask import Flask, abort, request
+from db_operator.read_from_db import read_rain_by_town, read_water_by_town, read_reservoir_by_town
+from flask import Flask, abort, request, render_template
 
 # https://github.com/line/line-bot-sdk-python
 from linebot import LineBotApi, WebhookHandler
@@ -19,7 +19,7 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 def callback():
 
     if request.method == "GET":
-        return str(read_city()[0][1])
+        return render_template("index.html")
     if request.method == "POST":
         signature = request.headers["X-Line-Signature"]
         body = request.get_data(as_text=True)
@@ -32,11 +32,43 @@ def callback():
         return "OK"
 
 
+# search route
+@ app.route('/search', methods=['GET'])
+def search_get():
+    return render_template("search.html")
+
+
 @handler.add(MessageEvent, message=TextMessage)  # 根據行政區判斷Warning
 def handle_message_text(event):
     get_message = event.message.text
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
-    water_condition = 'To be defined'
+    # [(data1), (data2), ],[], []
+    re_warns = read_reservoir_by_town()
+    rain_warns = read_rain_by_town()
+    water_warns = read_water_by_town()
+    re_msg = ""
+    rain_msg = ""
+    water_msg = ""
+    for re_warn in re_warns:
+        try:
+            re_msg += f"{re_warn[0]}\n"
+        except:
+            break
+    for rain_warn in rain_warns:
+        try:
+            rain_msg += f"{rain_warn[0]}\n"
+        except:
+            break
+    for water_warn in water_warns:
+        try:
+            water_msg += f"{water_warn[0]}\n"
+        except:
+            break
+    if water_msg != "" or re_msg != "" or rain_msg != "":
+        water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
+    else:
+        water_condition = "指定地區安全"
+
     correct_input = TextSendMessage(
         text="⚠️請輸入欲查詢水情之行政區，共5至7個字。\n例如: 臺北市信義區、桃園市桃園區、臺中市西區、嘉義縣阿里山鄉、南投縣南投市、臺東縣成功鎮。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
     output = TextSendMessage(
@@ -54,6 +86,7 @@ def handle_message_text(event):
         reply = output
 
     # Send To Line
+
     line_bot_api.reply_message(event.reply_token, reply)
 
 

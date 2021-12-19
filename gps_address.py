@@ -41,4 +41,4 @@ def in_range(mark1, mark2, limit):
 
 
 if __name__ == "__main__":
-    print(address_to_gps("新北市瑞芳區"))
+    print(address_to_gps("新北市"))

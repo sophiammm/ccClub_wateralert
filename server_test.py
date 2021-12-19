@@ -111,6 +111,12 @@ def warn_get():
     return render_template("warn.html", waterWarns=waterWarns, rainWarns=rainWarns, reservoirWarns=reservoirWarns)
 
 
+# select box test
+@ app.route("/select")
+def select():
+    return render_template("select_box.html")
+
+
 # def showWarn():
 #     # Get data from WRA API test
 #     city = cityNameToCodeAndEn("新北市")

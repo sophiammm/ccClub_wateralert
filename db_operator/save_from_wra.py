@@ -199,7 +199,7 @@ def save_reservoir_station():
     print(len(reservoir_station_info))
     rows = []
     for info in reservoir_station_info:
-        print(info)
+        # print(info)
         stationNo = info["StationNo"]
         stationName = info["StationName"]
         DBupdateTime = date_to_stamp(str(datetime.now()))
@@ -207,6 +207,7 @@ def save_reservoir_station():
             latitude = info["Latitude"]
             longitude = info["Longitude"]
         except:
+            print(info)
             loc = address_to_gps(stationName)
             if loc:
                 latitude = loc[0]
@@ -232,7 +233,3 @@ def truncate_table(table):
     cur.close()
     postgres_manager.close_connection()
     print("Operation completed")
-
-
-if __name__ == "__main__":
-    truncate_table("Reservoir_Station")
