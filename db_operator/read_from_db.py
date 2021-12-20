@@ -83,14 +83,27 @@ def check_warn(town_code):
     reservoir_results = []
     try:
         cur.execute(
-            f"SELECT stationNo FROM Rain_Warning WHERE townCode='{town_code}';")
+            f"SELECT warningLevel FROM Rain_Warning WHERE townCode='{town_code}';")
         rain_results = cur.fetchall()
         cur.execute(
-            f"SELECT stationNo FROM Water_Warning WHERE townCode='{town_code}';")
+            f"SELECT warningLevel FROM Water_Warning WHERE townCode='{town_code}';")
         water_results = cur.fetchall()
         cur.execute(
-            f"SELECT stationNo FROM Reservoir_Warning WHERE townCode='{town_code}';")
-        reservoir_results = cur.fetchall()
+            f"SELECT stationNo, nextSpillTime, status FROM Reservoir_Warning;")
+        reservoir_infos = cur.fetchall()
+        reservoir_affects = set()
+        for info in reservoir_infos:
+            cur.execute(
+                f"SELECT townCode FROM Reservoir_AffectedArea WHERE stationNo ='{info[0]}';")
+            reservoir_affect = cur.fetchall()
+            for area in reservoir_affect:
+                reservoir_affects.add(area[0])
+        if town_code in reservoir_affects:
+            # 未完成 僅供測試用
+            # 需要加上 若同一個地區受到複數水庫影響 資料該怎麼傳送 的邏輯
+            # 之後要注意格式要與water, rain一致
+            # 目前會把所有警戒區域回傳, 不是僅限回傳與User對應的
+            reservoir_results = reservoir_infos
 
         postgres_manager.conn.commit()
     except Exception as e:
