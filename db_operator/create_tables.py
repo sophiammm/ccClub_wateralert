@@ -1,10 +1,9 @@
 from db_operator.base_manager import PostgresBaseManager
 
-postgres_manager = PostgresBaseManager()
-cur = postgres_manager.conn.cursor()
-
 
 def create_city_town_table():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
     cur.execute(
         """
         CREATE TABLE City_Town (
@@ -18,9 +17,12 @@ def create_city_town_table():
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def create_water_related_table():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
     cur.execute(
         """
         CREATE TABLE Rain_Warning (
@@ -84,3 +86,4 @@ def create_water_related_table():
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
