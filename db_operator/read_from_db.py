@@ -80,6 +80,7 @@ def check_warn(town_id):
     cur = postgres_manager.conn.cursor()
     rain_results = []
     water_results = []
+    reservoir_results = []
     try:
         cur.execute(
             f"SELECT stationNo FROM Rain_Warning WHERE townCode='{town_id}';")
