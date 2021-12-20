@@ -64,18 +64,18 @@ def handle_message_text(event):
         rain_warns = warns["rain"]
         water_warns = warns["water"]
 
-        def warn_msg(warns):
+        def warn_msg(warns, target):
             msg = ""
             for warn in warns:
                 try:
-                    msg += f"{warn[0]}\n"
+                    msg += f"{warn[target]}\n"
                 except:
                     break
             return msg
 
-        re_msg = warn_msg(re_warns)
-        rain_msg = warn_msg(rain_warns)
-        water_msg = warn_msg(water_warns)
+        re_msg = warn_msg(re_warns, 2)
+        rain_msg = warn_msg(rain_warns, 0)
+        water_msg = warn_msg(water_warns, 0)
 
         if water_msg != "" or re_msg != "" or rain_msg != "":
             water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
