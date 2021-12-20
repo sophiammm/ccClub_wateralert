@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
 from db_operator.base_manager import PostgresBaseManager
 from db_operator.save_from_wra import save_reservoir_warning, save_rain_warning, save_water_warning, truncate_table
-from db_operator.read_from_db import read_db
+from db_operator.read_from_db import read_table
 from timestamp import stamp_to_date
 
 
@@ -96,13 +96,13 @@ def search_request():
 # check warn route
 @ app.route("/warn", methods=['GET'])
 def warn_get():
-    waterWarns = read_db("Water_Warning")
+    waterWarns = read_table("Water_Warning")
     for waterWarn in waterWarns:
         waterWarn["APIupdateTime"] = stamp_to_date(waterWarn["APIupdateTime"])
-    rainWarns = read_db("Rain_Warning")
+    rainWarns = read_table("Rain_Warning")
     for rainWarn in rainWarns:
         rainWarn["APIupdateTime"] = stamp_to_date(rainWarn["APIupdateTime"])
-    reservoirWarns = read_db("Reservoir_Warning")
+    reservoirWarns = read_table("Reservoir_Warning")
     for reservoirWarn in reservoirWarns:
         reservoirWarn["APIupdateTime"] = stamp_to_date(
             reservoirWarn["APIupdateTime"])
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     scheduler = APScheduler()
 
     # Add task
-    @scheduler.task('interval', id='save_warn', seconds=10, misfire_grace_time=900)
+    @scheduler.task('interval', id='save_warn', seconds=600, misfire_grace_time=900)
     def save_warn_from_wra():
         print('Job 1 executed')
         truncate_table("Rain_Warning")

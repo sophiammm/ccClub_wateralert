@@ -38,13 +38,13 @@ def read_city():
         return results
 
 
-def read_town_by_city(city):
+def read_town_by_city_code(cityCode):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
     try:
         cur.execute(
-            f"SELECT townName FROM City_Town WHERE cityName='{city}';")
+            f"SELECT townCode, townName FROM City_Town WHERE cityCode='{cityCode}';")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
@@ -56,7 +56,26 @@ def read_town_by_city(city):
         return results
 
 
+def read_address_by_town_code(townCode):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    results = []
+    try:
+        cur.execute(
+            f"SELECT cityName, townName FROM City_Town WHERE townCode='{townCode}';")
+        # Retrieve all rows from the PostgreSQL table
+        results = cur.fetchall()
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Read failed.")
+        print(e)
+    finally:
+        cur.close()
+        return results
+
 # linebot
+
+
 def read_town_code(city, town):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Box</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
+        id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                <h2>Select box</h2>
+                </p>
+                <form action="/result" method="POST">
+                    {{ form.csrf_token }}
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        {{ form.city(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <label for="town">Town:</label>
+                        {{ form.town(class="form-control") }}
+                    </div>
+                    <input type="submit" class="btn btn-success btn-lg">
+                </form>
+                <br>
+                <input type="button" class="btn btn-success btn-lg" onclick="location.href='/'"
+                    value="Go back to index">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        city_select = document.getElementById("city");
+        town_select = document.getElementById("town");
+
+        city_select.onchange = function () {
+            city = city_select.value;
+            console.log(city);
+            fetch("/select/town/" + city).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = "";
+                    for (town of data.town_city) {
+                        optionHTML += '<option value="' + town[0] + '">' + town[1] + '</option>'
+                    }
+                    town_select.innerHTML = optionHTML;
+                });
+            });
+        }
+    </script>
+
+</body>
+
+</html>
