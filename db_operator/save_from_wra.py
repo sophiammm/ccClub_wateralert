@@ -165,16 +165,17 @@ def save_reservoir_warning():
     for info in reservoir_warn_info:
         try:
             stationNo = info["StationNo"]
+            townCode = info["TownCode"]
             APIupdateTime = date_to_stamp(info["Time"])
             DBupdateTime = date_to_stamp(str(datetime.now()))
             nextSpillTime = date_to_stamp(info["NextSpillTime"])
             status = info["Status"]
         except:
             continue
-        rows.append((stationNo, APIupdateTime,
+        rows.append((stationNo, townCode, APIupdateTime,
                     DBupdateTime, nextSpillTime, status))
 
-    sql = "INSERT INTO Reservoir_Warning (stationNo, APIupdateTime, DBupdateTime, nextSpillTime, status) VALUES %s"
+    sql = "INSERT INTO Reservoir_Warning (stationNo, townCode, APIupdateTime, DBupdateTime, nextSpillTime, status) VALUES %s"
     try:
         extras.execute_values(cur, sql, rows)
     except Exception as e:
@@ -244,16 +245,16 @@ def save_fake_to_rain_warning(stationNo="00H810", townCode="1000813", warningLev
     postgres_manager.close_connection()
 
 
-def save_fake_to_reservoir_warning(stationNo="30401", nextSpillTime=datetime.now, status="1: 放水中"):
+def save_fake_to_reservoir_warning(stationNo="30401", townCode="6700300", nextSpillTime=datetime.now, status="1: 放水中"):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     nextSpillStamp = date_to_stamp(str(nextSpillTime))
     try:
         cur.execute("""
-            INSERT INTO reservoir_warning (stationno, nextSpillTime, status)
+            INSERT INTO reservoir_warning (stationno, townCode, nextSpillTime, status)
             VALUES (%s, %s, %s);
             """,
-                    (stationNo, nextSpillStamp, status))
+                    (stationNo, townCode, nextSpillStamp, status))
     except Exception as e:
         print("Insert failed.")
         print(e)
