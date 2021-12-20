@@ -3,14 +3,11 @@ from psycopg2 import extras
 from db_operator.base_manager import PostgresBaseManager
 from datetime import datetime
 from timestamp import date_to_stamp
-from gps_address import address_to_gps
-
-
-postgres_manager = PostgresBaseManager()
-cur = postgres_manager.conn.cursor()
 
 
 def save_city_town():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
     city_api = "https://fhy.wra.gov.tw/WraApi/v1/Basic/City"
     city_info = requests.get(city_api).json()
     for info in city_info:
@@ -27,7 +24,11 @@ def save_city_town():
             same_city_rows.append((cityCode, cityName, townCode, townName))
 
         sql = "INSERT INTO City_Town (cityCode, cityName, townCode, townName) VALUES %s"
-
+        try:
+            extras.execute_values(cur, sql, same_city_rows)
+        except Exception as e:
+            print("Save failed.")
+            print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
@@ -49,10 +50,15 @@ def save_rain_warning():
                     DBupdateTime, warningLevel))
 
     sql = "INSERT INTO Rain_Warning (stationNo, townCode, APIupdateTime, DBupdateTime, warningLevel) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_rain_station():
@@ -71,10 +77,15 @@ def save_rain_station():
         rows.append((stationNo, latitude, longitude))
 
     sql = "INSERT INTO Rain_Station (stationNo, latitude, longitude) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_water_warning():
@@ -93,10 +104,15 @@ def save_water_warning():
                      DBupdateTime, warningLevel))
 
     sql = "INSERT INTO Water_Warning (stationNo, townCode, APIupdateTime, DBupdateTime, warningLevel) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_water_station():
@@ -115,10 +131,15 @@ def save_water_station():
         rows.append((stationNo, latitude, longitude))
 
     sql = "INSERT INTO Water_Station (stationNo, latitude, longitude) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_reservoir_warning():
@@ -140,17 +161,23 @@ def save_reservoir_warning():
                     DBupdateTime, nextSpillTime, status))
 
     sql = "INSERT INTO Reservoir_Warning (stationNo, APIupdateTime, DBupdateTime, nextSpillTime, status) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_reservoir_affectedarea():
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     reservoir_affectedarea_api = "https://fhy.wra.gov.tw/WraApi/v1/Reservoir/AffectedArea"
-    reservoir_affectedarea_info = requests.get(reservoir_affectedarea_api).json()
+    reservoir_affectedarea_info = requests.get(
+        reservoir_affectedarea_api).json()
     rows = []
     for info in reservoir_affectedarea_info:
         try:
@@ -161,10 +188,15 @@ def save_reservoir_affectedarea():
         rows.append((stationNo, townCode))
 
     sql = "INSERT INTO Reservoir_AffectedArea (stationNo, townCode) VALUES %s"
-    extras.execute_values(cur, sql, rows)
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 # 儲存測試值
@@ -175,35 +207,58 @@ def save_fake_to_water_warning():
         INSERT INTO water_warning (stationno, towncode, warninglevel)
         VALUES (%s, %s, %s);
         """,
-        ('1420H053', '6601000', 1))
-    postgres_manager.conn.commit()
-    cur.close()
-    postgres_manager.close_connection()
-def save_fake_to_rain_warning():
-    postgres_manager = PostgresBaseManager()
-    cur = postgres_manager.conn.cursor()
-    cur.execute("""
-        INSERT INTO rain_warning (stationno, towncode, status)
-        VALUES (%s, %s, %s);
-        """,
-        ('00H810', '1000813', 2))
-    postgres_manager.conn.commit()
-    cur.close()
-    postgres_manager.close_connection()
-def save_fake_to_reservoir_warning():
-    postgres_manager = PostgresBaseManager()
-    cur = postgres_manager.conn.cursor()
-    cur.execute("""
-        INSERT INTO reservoir_warning (stationno, nextSpillTime, status)
-        VALUES (%s, %s, %s);
-        """,
-        ('30401', '100000000', '1: 放水中'))
+                ('1420H053', '6601000', 1))
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
 
-def truncate_table(table):
-    cur.execute(f" TRUNCATE TABLE {table}")
+
+def save_fake_to_rain_warning(stationNo="00H810", townCode="1000813", status=2):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO rain_warning (stationno, towncode, status)
+            VALUES (%s, %s, %s);
+            """,
+                    (stationNo, townCode, status))
+    except Exception as e:
+        print("Insert failed.")
+        print(e)
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+
+
+def save_fake_to_reservoir_warning(stationNo="30401", nextSpillTime=datetime.now, status="1: 放水中"):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    nextSpillStamp = date_to_stamp(str(nextSpillTime))
+    try:
+        cur.execute("""
+            INSERT INTO reservoir_warning (stationno, nextSpillTime, status)
+            VALUES (%s, %s, %s);
+            """,
+                    (stationNo, nextSpillStamp, status))
+    except Exception as e:
+        print("Insert failed.")
+        print(e)
+    postgres_manager.conn.commit()
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")
+
+
+# 清空table中資料
+def truncate_table(table):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    try:
+        cur.execute(f" TRUNCATE TABLE {table}")
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Truncate failed.")
+        print(e)
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")
