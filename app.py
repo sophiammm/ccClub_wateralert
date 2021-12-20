@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from db_operator.read_from_db import check_warn, read_townID
+from db_operator.read_from_db import check_warn, read_town_code
 from flask import Flask, abort, request, render_template
 
 # https://github.com/line/line-bot-sdk-python
@@ -57,9 +57,9 @@ def handle_message_text(event):
     else:
         address_city = get_message[:3]
         address_town = get_message[3:]
-        town_id = read_townID(address_city, address_town)[0][0]
+        town_code = read_town_code(address_city, address_town)[0][0]
         # [(data1), (data2), ],[], []
-        warns = check_warn(town_id)
+        warns = check_warn(town_code)
         re_warns = warns["reservoir"]
         rain_warns = warns["rain"]
         water_warns = warns["water"]

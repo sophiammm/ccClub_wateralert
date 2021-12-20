@@ -26,7 +26,7 @@ def read_city():
     results = []
     try:
         cur.execute(
-            "SELECT DISTINCT cityID, cityName FROM City_Town;")
+            "SELECT DISTINCT cityCode, cityName FROM City_Town;")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
@@ -57,7 +57,7 @@ def read_town_by_city(city):
 
 
 # linebot
-def read_townID(city, town):
+def read_town_code(city, town):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
@@ -75,7 +75,7 @@ def read_townID(city, town):
         return results
 
 
-def check_warn(town_id):
+def check_warn(town_code):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     rain_results = []
@@ -83,13 +83,13 @@ def check_warn(town_id):
     reservoir_results = []
     try:
         cur.execute(
-            f"SELECT stationNo FROM Rain_Warning WHERE townCode='{town_id}';")
+            f"SELECT stationNo FROM Rain_Warning WHERE townCode='{town_code}';")
         rain_results = cur.fetchall()
         cur.execute(
-            f"SELECT stationNo FROM Water_Warning WHERE townCode='{town_id}';")
+            f"SELECT stationNo FROM Water_Warning WHERE townCode='{town_code}';")
         water_results = cur.fetchall()
         cur.execute(
-            f"SELECT stationNo FROM Reservoir_Warning WHERE townCode='{town_id}';")
+            f"SELECT stationNo FROM Reservoir_Warning WHERE townCode='{town_code}';")
         reservoir_results = cur.fetchall()
 
         postgres_manager.conn.commit()
