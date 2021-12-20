@@ -3,6 +3,7 @@ from psycopg2 import extras
 from db_operator.base_manager import PostgresBaseManager
 from datetime import datetime
 from timestamp import date_to_stamp
+from gps_address import address_to_gps
 
 
 def save_city_town():
@@ -32,6 +33,7 @@ def save_city_town():
     postgres_manager.conn.commit()
     cur.close()
     postgres_manager.close_connection()
+    print("Operation completed")
 
 
 def save_rain_warning():
@@ -73,7 +75,13 @@ def save_rain_station():
             latitude = info["Latitude"]
             longitude = info["Longitude"]
         except:
-            continue
+            stationName = info["StationName"]
+            loc = address_to_gps(stationName)
+            if loc:
+                latitude = loc[0]
+                longitude = loc[1]
+            else:
+                continue
         rows.append((stationNo, latitude, longitude))
 
     sql = "INSERT INTO Rain_Station (stationNo, latitude, longitude) VALUES %s"
@@ -127,7 +135,13 @@ def save_water_station():
             latitude = info["Latitude"]
             longitude = info["Longitude"]
         except:
-            continue
+            stationName = info["StationName"]
+            loc = address_to_gps(stationName)
+            if loc:
+                latitude = loc[0]
+                longitude = loc[1]
+            else:
+                continue
         rows.append((stationNo, latitude, longitude))
 
     sql = "INSERT INTO Water_Station (stationNo, latitude, longitude) VALUES %s"
@@ -213,15 +227,15 @@ def save_fake_to_water_warning():
     postgres_manager.close_connection()
 
 
-def save_fake_to_rain_warning(stationNo="00H810", townCode="1000813", status=2):
+def save_fake_to_rain_warning(stationNo="00H810", townCode="1000813", warningLevel=2):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     try:
         cur.execute("""
-            INSERT INTO rain_warning (stationno, towncode, status)
+            INSERT INTO rain_warning (stationno, towncode, warningLevel)
             VALUES (%s, %s, %s);
             """,
-                    (stationNo, townCode, status))
+                    (stationNo, townCode, warningLevel))
     except Exception as e:
         print("Insert failed.")
         print(e)
