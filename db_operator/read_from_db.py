@@ -63,7 +63,7 @@ def read_townID(city, town):
     results = []
     try:
         cur.execute(
-            f"SELECT townID FROM City_Town WHERE cityName='{city}' AND townName='{town}'")
+            f"SELECT town FROM City_Town WHERE cityName='{city}' AND townName='{town}'")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
