@@ -61,7 +61,6 @@ def callback():
 def select():
     form = Form()
     form.city.choices = read_city()
-    print(form.city)
     return render_template("select_box.html", form=form)
 
 
