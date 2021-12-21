@@ -1,11 +1,7 @@
 import os
-from datetime import datetime
-import sys
-from flask_apscheduler import APScheduler
 from wtforms import SelectField
 from flask_wtf import FlaskForm
 from db_operator.read_from_db import check_warn, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
-from db_operator.update_from_wra import update_rain_warning, update_water_warning, update_reservoir_warning
 from flask import Flask, abort, request, render_template, jsonify
 
 
@@ -114,24 +110,5 @@ def handle_message_location(event):
 
 
 if __name__ == "__main__":
-
-    # initialize scheduler
-    scheduler = APScheduler()
-
-    # Add task
-    @scheduler.task('interval', id='save_warn', seconds=600, misfire_grace_time=120)
-    def save_warn_from_wra():
-        print('task executed at ' + str(datetime.now()))
-        sys.stdout.flush()
-        update_rain_warning()
-        update_water_warning()
-        update_reservoir_warning()
-
-    # if you don't wanna use a config, you can set options here:
-    # scheduler.api_enabled = True
-    scheduler.init_app(app)
-
-    scheduler.start()
-
     # In debug mode, Flask's reloader will load the flask app twice
     app.run(use_reloader=False)

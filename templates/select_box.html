@@ -44,7 +44,6 @@
 
         city_select.onchange = function () {
             city = city_select.value;
-            console.log(city);
             fetch("/select/town/" + city).then(function (response) {
                 response.json().then(function (data) {
                     optionHTML = "";
