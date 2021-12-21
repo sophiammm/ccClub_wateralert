@@ -21,6 +21,7 @@ from linebot_reply import input_text, input_location
 class Config:
     SCHEDULER_API_ENABLED = True
     SCHEDULER_TIMEZONE = "Asia/Taipei"  # <========== 設置時區, 時區不一致可能會導致任務時間出錯
+    SECRET_KEY = os.getenv("CSRF_KEY")
 
 
 # init server
