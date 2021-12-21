@@ -44,7 +44,7 @@ def handle_message_text(event):
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
 
     correct_input = TextSendMessage(
-        text="⚠️請輸入欲查詢水情之行政區，共5至7個字。\n例如: 臺北市信義區、桃園市桃園區、臺中市西區、嘉義縣阿里山鄉、南投縣南投市、臺東縣成功鎮。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
+        text="⚠️請更正欲查詢水情之行政區的錯字或遺漏字，並符合5至7個字。\n例如: 嘉義縣阿里山鄉、臺東縣成功鎮、南投縣南投市、臺中市西區。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
 
     if len(get_message) < 5 or len(get_message) > 7:  # 行政區總共5到7個字而已
         reply = correct_input
@@ -57,34 +57,37 @@ def handle_message_text(event):
     else:
         address_city = get_message[:3]
         address_town = get_message[3:]
-        town_code = read_town_code(address_city, address_town)[0][0]
-        # [(data1), (data2), ],[], []
-        warns = check_warn(town_code)
-        re_warns = warns["reservoir"]
-        rain_warns = warns["rain"]
-        water_warns = warns["water"]
+        try: # 若在Database找不到User輸入的內容，就跑except
+            town_code = read_town_code(address_city, address_town)[0][0]
+            # [(data1), (data2), ],[], []
+            warns = check_warn(town_code)
+            re_warns = warns["reservoir"]
+            rain_warns = warns["rain"]
+            water_warns = warns["water"]
 
-        def warn_msg(warns, target):
-            msg = ""
-            for warn in warns:
-                try:
-                    msg += f"{warn[target]}\n"
-                except:
-                    break
-            return msg
+            def warn_msg(warns, target):
+                msg = ""
+                for warn in warns:
+                    try:
+                        msg += f"{warn[target]}\n"
+                    except:
+                        break
+                return msg
 
-        re_msg = warn_msg(re_warns, 2)
-        rain_msg = warn_msg(rain_warns, 0)
-        water_msg = warn_msg(water_warns, 0)
+            re_msg = warn_msg(re_warns, 2)
+            rain_msg = warn_msg(rain_warns, 0)
+            water_msg = warn_msg(water_warns, 0)
 
-        if water_msg != "" or re_msg != "" or rain_msg != "":
-            water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
-        else:
-            water_condition = "指定地區安全"
+            if water_msg != "" or re_msg != "" or rain_msg != "":
+                water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
+            else:
+                water_condition = "指定地區安全"
 
-        output = TextSendMessage(
-            text=f"您輸入的是：{get_message}\n此區域的水情狀況：{water_condition}")
-        reply = output
+            output = TextSendMessage(
+                text=f"您輸入的是：{get_message}\n此區域的水情狀況⬇\n{water_condition}")
+            reply = output
+        except:
+            reply = correct_input
 
     # Send To Line
 
