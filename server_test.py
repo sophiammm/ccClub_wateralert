@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
 from db_operator.base_manager import PostgresBaseManager
 from db_operator.save_from_wra import save_reservoir_warning, save_rain_warning, save_water_warning, truncate_table
+from db_operator.update_from_wra import update_rain_warning, update_water_warning, update_reservoir_warning
 from db_operator.read_from_db import read_table
 from timestamp import stamp_to_date
 
@@ -133,15 +134,18 @@ if __name__ == "__main__":
     scheduler = APScheduler()
 
     # Add task
-    @scheduler.task('interval', id='save_warn', seconds=600, misfire_grace_time=900)
+    @scheduler.task('interval', id='save_warn', seconds=15, misfire_grace_time=900)
     def save_warn_from_wra():
         print('Job 1 executed')
-        truncate_table("Rain_Warning")
-        truncate_table("Water_Warning")
-        truncate_table("Reservoir_Warning")
-        save_rain_warning()
-        save_water_warning()
-        save_reservoir_warning()
+        # truncate_table("Rain_Warning")
+        # truncate_table("Water_Warning")
+        # truncate_table("Reservoir_Warning")
+        # save_rain_warning()
+        # save_water_warning()
+        # save_reservoir_warning()
+        update_rain_warning()
+        update_water_warning()
+        update_reservoir_warning()
 
     # if you don't wanna use a config, you can set options here:
     # scheduler.api_enabled = True
