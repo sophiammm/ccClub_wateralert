@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import sys
 from flask_apscheduler import APScheduler
 from wtforms import SelectField
 from flask_wtf import FlaskForm
@@ -118,9 +119,10 @@ if __name__ == "__main__":
     scheduler = APScheduler()
 
     # Add task
-    @scheduler.task('interval', id='save_warn', seconds=600, misfire_grace_time=900)
+    @scheduler.task('interval', id='save_warn', seconds=600, misfire_grace_time=120)
     def save_warn_from_wra():
-        print('task executed')
+        print('task executed at ' + str(datetime.now()))
+        sys.stdout.flush()
         update_rain_warning()
         update_water_warning()
         update_reservoir_warning()
