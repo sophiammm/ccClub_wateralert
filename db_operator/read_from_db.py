@@ -131,3 +131,21 @@ def check_warn(town_code):
     finally:
         cur.close()
         return {"water": water_results, "rain": rain_results, "reservoir": reservoir_results}
+
+
+def check_reservoir_name(station_code):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    results = []
+    try:
+        cur.execute(
+            f"SELECT stationName FROM Reservoir_Station WHERE stationNo='{station_code}';")
+        # Retrieve all rows from the PostgreSQL table
+        results = cur.fetchall()
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Read failed.")
+        print(e)
+    finally:
+        cur.close()
+        return results

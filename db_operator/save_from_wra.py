@@ -130,8 +130,10 @@ def save_water_station():
     water_station_info = requests.get(water_station_api).json()
     rows = []
     for info in water_station_info:
+        stationNo = info["StationNo"]
+        basinName = info["BasinName"]
         try:
-            stationNo = info["StationNo"]
+
             latitude = info["Latitude"]
             longitude = info["Longitude"]
         except:
@@ -142,9 +144,9 @@ def save_water_station():
                 longitude = loc[1]
             else:
                 continue
-        rows.append((stationNo, latitude, longitude))
+        rows.append((stationNo, basinName, latitude, longitude))
 
-    sql = "INSERT INTO Water_Station (stationNo, latitude, longitude) VALUES %s"
+    sql = "INSERT INTO Water_Station (stationNo, basinName, latitude, longitude) VALUES %s"
     try:
         extras.execute_values(cur, sql, rows)
     except Exception as e:
@@ -176,6 +178,29 @@ def save_reservoir_warning():
                     DBupdateTime, nextSpillTime, status))
 
     sql = "INSERT INTO Reservoir_Warning (stationNo, townCode, APIupdateTime, DBupdateTime, nextSpillTime, status) VALUES %s"
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
+    postgres_manager.conn.commit()
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")
+
+
+def save_reservoir_station():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    reservoir_station_api = "https://fhy.wra.gov.tw/WraApi/v1/Reservoir/Station"
+    reservoir_station_info = requests.get(reservoir_station_api).json()
+    rows = []
+    for info in reservoir_station_info:
+        stationNo = info["StationNo"]
+        stationName = info["StationName"]
+        rows.append((stationNo, stationName))
+
+    sql = "INSERT INTO Reservoir_Station (stationNo, stationName) VALUES %s"
     try:
         extras.execute_values(cur, sql, rows)
     except Exception as e:

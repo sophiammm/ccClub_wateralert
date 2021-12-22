@@ -58,6 +58,7 @@ def create_water_related_table():
         """
         CREATE TABLE Water_Station (
         stationNo varchar(12) PRIMARY key,
+        basinName varchar(8),
         latitude decimal(11,7),
         longitude decimal(11,7)
         );
@@ -72,6 +73,14 @@ def create_water_related_table():
         DBupdateTime int,
         nextSpillTime int,
         status varchar(15)
+        );
+        """
+    )
+    cur.execute(
+        """
+        CREATE TABLE Reservoir_Station (
+        stationNo varchar(12) PRIMARY key,
+        stationName varchar(10)
         );
         """
     )
