@@ -10,7 +10,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 # 更新 LocationMessage
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, LocationMessage
-from linebot_reply import input_text, input_location
+from reply import input_text, input_location
 
 # set configuration values
 
@@ -95,7 +95,9 @@ def search_request():
 def handle_message_text(event):
     get_message = event.message.text
     # Send To Line
-    line_bot_api.reply_message(event.reply_token, input_text(get_message))
+    reply = TextSendMessage(
+                text=input_text(get_message))
+    line_bot_api.reply_message(event.reply_token, reply)
 
 
 @handler.add(MessageEvent, message=LocationMessage)  # 根據行政區和經緯度判斷warning
@@ -104,8 +106,9 @@ def handle_message_location(event):
     latitude = event.message.latitude
     longitude = event.message.longitude
     # Send To Line
-    line_bot_api.reply_message(event.reply_token, input_location(
-        get_message, latitude, longitude))
+    reply = TextSendMessage(
+                text=input_location(get_message, latitude, longitude))
+    line_bot_api.reply_message(event.reply_token, reply)
 
 
 if __name__ == "__main__":
