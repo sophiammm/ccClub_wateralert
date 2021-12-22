@@ -34,6 +34,14 @@ def input_text(get_message): # User打字輸入行政區
                     break
             return msg
 
+        waterLevel_remark = {'1':'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
+            '2':'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
+            '3':'河川水位預計未來2小時到達高灘地之水位。'
+        }
+        rainLevel_remark = {'1':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
+            '2':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
+        }
+
         water_msg = warn_msg(water_warns, 1) # 0: stationNo, 1: warningLevel
         water_msg_stationNo = warn_msg(water_warns, 0) # 0: stationNo, 1: warningLevel
         rain_msg = warn_msg(rain_warns, 0) # 0: warningLevel
@@ -41,27 +49,25 @@ def input_text(get_message): # User打字輸入行政區
         re_msg_stationNo = warn_msg(re_warns, 0) # 0: stationNo, 1: nextSpillTime, 2: status
 
         if water_msg != "":
-            water_msg = f'{water_msg}級警戒' # 加上級警戒
+            water_msg = f'{water_msg}級警戒\n{waterLevel_remark[water_msg]}' # 加上級警戒和remark
             water_basinName = f'({check_water_basinName(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else: 
-            water_msg = '安全'
+            water_msg = '無安全警示'
             water_basinName = ""
 
         if rain_msg != "":
-            rain_msg = f'{rain_msg}級警戒' # 加上級警戒
+            rain_msg = f'{rain_msg}級警戒\n{rainLevel_remark[rain_msg]}' # 加上級警戒和remark
         else: 
-            rain_msg = '安全'
+            rain_msg = '無安全警示'
 
         if re_msg != "":
+            re_msg = re_msg[3:]
             re_msg_stationName = f'({check_reservoir_name(re_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else:
-            re_msg = '安全'
+            re_msg = '無安全警示'
             re_msg_stationName = ""
 
-        if water_msg != "" or re_msg != "" or rain_msg != "": # 只要其中一個有內容，就反饋！
-            water_condition = f"水位{water_basinName}: {water_msg}\n\n雨量: {rain_msg}\n\n水庫{re_msg_stationName}: {re_msg}"
-        else:
-            water_condition = "指定地區安全"
+        water_condition = f"河川{water_basinName}: {water_msg}\n\n雨勢: {rain_msg}\n\n水庫{re_msg_stationName}: {re_msg}"
 
         reply = f"您輸入的是: {get_message}\n此區域的水情狀況⬇\n{water_condition}"
     
@@ -103,6 +109,14 @@ def input_location(get_message, latitude, longitude): # User發送位置資訊
                     break
             return msg
 
+        waterLevel_remark = {'1':'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
+            '2':'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
+            '3':'河川水位預計未來2小時到達高灘地之水位。'
+        }
+        rainLevel_remark = {'1':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
+            '2':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
+        }
+
         water_msg = warn_msg(water_warns, 1) # 0: stationNo, 1: warningLevel
         water_msg_stationNo = warn_msg(water_warns, 0) # 0: stationNo, 1: warningLevel
         rain_msg = warn_msg(rain_warns, 0) # 0: warningLevel
@@ -110,31 +124,29 @@ def input_location(get_message, latitude, longitude): # User發送位置資訊
         re_msg_stationNo = warn_msg(re_warns, 0) # 0: stationNo, 1: nextSpillTime, 2: status
 
         if water_msg != "":
-            water_msg = f'{water_msg}級警戒' # 加上級警戒
+            water_msg = f'{water_msg}級警戒\n{waterLevel_remark[water_msg]}' # 加上級警戒和remark
             water_basinName = f'({check_water_basinName(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else: 
-            water_msg = '安全'
+            water_msg = '無安全警示'
             water_basinName = ""
 
         if rain_msg != "":
-            rain_msg = f'{rain_msg}級警戒' # 加上級警戒
+            rain_msg = f'{rain_msg}級警戒\n{rainLevel_remark[rain_msg]}' # 加上級警戒和remark
         else: 
-            rain_msg = '安全'
+            rain_msg = '無安全警示'
 
         if re_msg != "":
+            re_msg = re_msg[3:]
             re_msg_stationName = f'({check_reservoir_name(re_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else:
-            re_msg = '安全'
+            re_msg = '無安全警示'
             re_msg_stationName = ""
 
-        if water_msg != "" or re_msg != "" or rain_msg != "": # 只要其中一個有內容，就反饋！
-            water_condition = f"水位{water_basinName}: {water_msg}\n\n雨量: {rain_msg}\n\n水庫{re_msg_stationName}: {re_msg}"
-        else:
-            water_condition = "指定地區安全"
-        
+        water_condition = f"河川{water_basinName}: {water_msg}\n\n雨勢: {rain_msg}\n\n水庫{re_msg_stationName}: {re_msg}"
+
         reply = f"您選取的位置是: {get_message}\n緯度: {latitude}\n經度: {longitude}\n\n此區域的水情狀況⬇\n{water_condition}"
     
     except:
-        reply = '請重新發送位置資訊。'
+        reply = '⚠️請重新發送位置資訊。'
     
     return(reply)
