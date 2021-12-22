@@ -6,7 +6,7 @@ def input_text(get_message): # User打字輸入行政區
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
 
     correct_input = TextSendMessage(
-        text="⚠️請更正欲查詢水情之行政區的錯字或遺漏字，並符合5至7個字。\n例如: 嘉義縣阿里山鄉、臺東縣成功鎮、南投縣南投市、臺中市西區。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
+        text="⚠️請檢查欲查詢水情之行政區的錯字或遺漏字，並符合5至7個字。\n例如: 嘉義縣阿里山鄉、臺東縣成功鎮、南投縣南投市、臺中市西區。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。")
 
     if len(get_message) < 5 or len(get_message) > 7:  # 行政區總共5到7個字而已
         reply = correct_input
@@ -31,17 +31,33 @@ def input_text(get_message): # User打字輸入行政區
                 msg = ""
                 for warn in warns:
                     try:
-                        msg += f"{warn[target]}\n"
+                        msg += f"{warn[target]}"
                     except:
                         break
                 return msg
 
-            re_msg = warn_msg(re_warns, 2)
-            rain_msg = warn_msg(rain_warns, 0)
-            water_msg = warn_msg(water_warns, 0)
+            water_msg = warn_msg(water_warns, 0) # 0: warningLevel
+            rain_msg = warn_msg(rain_warns, 0) # 0: warningLevel
+            re_msg_stationNo = warn_msg(re_warns, 0) # 0: stationNo, 1: nextSpillTime, 2: status
+            re_msg_status = warn_msg(re_warns, 2) # 0: stationNo, 1: nextSpillTime, 2: status
 
-            if water_msg != "" or re_msg != "" or rain_msg != "":
-                water_condition = f"water:{water_msg}\n\nrain:{rain_msg}\n\nreservoir:{re_msg}"
+            if water_msg != "":
+                water_msg = f'{water_msg}級警戒' # 加上級警戒
+            else: 
+                water_msg = '安全'
+
+            if rain_msg != "":
+                rain_msg = f'{rain_msg}級警戒' # 加上級警戒
+            else: 
+                rain_msg = '安全'
+
+            if re_msg_stationNo != "":
+                re_msg_stationNo = f'({re_msg_stationNo})' # 加上()
+            if re_msg_status == "":
+                re_msg_status = '安全'
+
+            if water_msg != "" or re_msg_status != "" or rain_msg != "": # 只要其中一個有內容，就反饋！
+                water_condition = f"水位:{ water_msg}\n\n雨量: {rain_msg}\n\n水庫{re_msg_stationNo}: {re_msg_status}"
             else:
                 water_condition = "指定地區安全"
 
