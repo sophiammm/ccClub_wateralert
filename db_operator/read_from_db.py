@@ -105,7 +105,7 @@ def check_warn(town_code):
             f"SELECT warningLevel FROM Rain_Warning WHERE townCode='{town_code}';")
         rain_results = cur.fetchall()
         cur.execute(
-            f"SELECT warningLevel FROM Water_Warning WHERE townCode='{town_code}';")
+            f"SELECT stationNo, warningLevel FROM Water_Warning WHERE townCode='{town_code}';")
         water_results = cur.fetchall()
         cur.execute(
             f"SELECT stationNo, nextSpillTime, status FROM Reservoir_Warning;")
@@ -140,6 +140,23 @@ def check_reservoir_name(station_code):
     try:
         cur.execute(
             f"SELECT stationName FROM Reservoir_Station WHERE stationNo='{station_code}';")
+        # Retrieve all rows from the PostgreSQL table
+        results = cur.fetchall()
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Read failed.")
+        print(e)
+    finally:
+        cur.close()
+        return results
+
+def check_water_basinName(station_code):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    results = []
+    try:
+        cur.execute(
+            f"SELECT basinName FROM Water_Station WHERE stationNo='{station_code}';")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
