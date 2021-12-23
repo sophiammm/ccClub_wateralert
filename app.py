@@ -2,6 +2,7 @@ import os
 from wtforms import SelectField
 from flask_wtf import FlaskForm
 from db_operator.read_from_db import check_warn, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
+from gps_address import gps_to_address
 from flask import Flask, abort, request, render_template, jsonify
 
 
@@ -57,7 +58,23 @@ def callback():
         return "OK"
 
 
-@ app.route("/select")
+@ app.route("/location", methods=["GET", "POST"])
+def locate():
+    if request.method == "GET":
+        return render_template("location.html")
+    if request.method == "POST":
+        data = request.get_json()
+        if data == "":
+            print("No data")
+        else:
+            print(data)
+            mark = (data["lat"], data["lon"])
+            address = gps_to_address(mark)
+
+        return jsonify({"address": address})
+
+
+@ app.route("/address")
 def select():
     form = Form()
     form.city.choices = read_city()
@@ -96,7 +113,7 @@ def handle_message_text(event):
     get_message = event.message.text
     # Send To Line
     reply = TextSendMessage(
-                text=input_text(get_message))
+        text=input_text(get_message))
     line_bot_api.reply_message(event.reply_token, reply)
 
 
@@ -107,7 +124,7 @@ def handle_message_location(event):
     longitude = event.message.longitude
     # Send To Line
     reply = TextSendMessage(
-                text=input_location(get_message, latitude, longitude))
+        text=input_location(get_message, latitude, longitude))
     line_bot_api.reply_message(event.reply_token, reply)
 
 

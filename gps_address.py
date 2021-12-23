@@ -27,9 +27,27 @@ def address_to_gps(address, attempt=1, max_attempts=40):
 
 
 def gps_to_address(mark):
-    location = geolocator.reverse(f"{mark[0]}, {mark[1]}", )
-    ads = location.address
-    return ads
+    location = geolocator.reverse(f"{mark[0]}, {mark[1]}", ).raw["address"]
+    try:
+        # 台北新北
+        if location["state"] != "臺灣省":
+            city = location["state"]
+        # 台灣省下縣市
+        else:
+            try:
+                city = location["city"]
+            except:
+                city = location["county"]
+    except:
+        # 其他直轄市
+        city = location["city"]
+    # 有些suburb是區, 有些是里, 有town先取town
+    try:
+        town = location["town"]
+    except:
+        town = location["suburb"]
+
+    return city + town
 
 
 def in_range(mark1, mark2, limit):

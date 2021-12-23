@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" Content-Ty>
+    <title>location</title>
+</head>
+
+<body>
+
+    <p>Click the button to get your coordinates.</p>
+
+    <button onclick="getLocation()">Try It</button>
+
+    <p id="demo"></p>
+
+    <script>
+        var x = document.getElementById("demo");
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+                console.log(location);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        };
+        function showPosition(position) {
+            //Obj of data to send in future like a dummyDb
+            const data = { lat: position.coords.latitude, lon: position.coords.longitude };
+            console.log(position.coords);
+            //POST request with body equal on data in JSON format
+            fetch('/location', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                //Then with the data from the response in JSON...
+                .then((redata) => {
+                    console.log('Success:', redata);
+                    x.innerHTML = "Your location:" +
+                        "<br>Latitude: " + data["lat"] +
+                        "<br>Longitude: " + data["lon"] +
+                        "<br>Address: " + redata["address"];
+                })
+                //Then with the error genereted...
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

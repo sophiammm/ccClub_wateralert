@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from wtforms import SelectField
 from flask_wtf import FlaskForm
 from db_operator.read_from_db import read_city, read_town_by_city_code, read_address_by_town_code, check_warn
+from gps_address import gps_to_address
 
 
 class Config:
@@ -24,11 +25,26 @@ def index():
     return render_template("index.html")
 
 
-@ app.route("/select")
+@ app.route("/location", methods=["GET", "POST"])
+def test():
+    if request.method == "GET":
+        return render_template("location.html")
+    if request.method == "POST":
+        data = request.get_json()
+        if data == "":
+            print("No data")
+        else:
+            print(data)
+            mark = (data["lat"], data["lon"])
+            address = gps_to_address(mark)
+
+        return jsonify({"address": address})
+
+
+@ app.route("/address")
 def select():
     form = Form()
     form.city.choices = read_city()
-    print(form.city)
     return render_template("select_box.html", form=form)
 
 

@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import sys
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_apscheduler import APScheduler
 from db_operator.base_manager import PostgresBaseManager
@@ -134,9 +135,10 @@ if __name__ == "__main__":
     scheduler = APScheduler()
 
     # Add task
-    @scheduler.task('interval', id='save_warn', seconds=15, misfire_grace_time=900)
+    @scheduler.task('interval', id='save_warn', seconds=15, misfire_grace_time=120)
     def save_warn_from_wra():
-        print('Job 1 executed')
+        print('task executed at ' + str(datetime.now()))
+        sys.stdout.flush()
         # truncate_table("Rain_Warning")
         # truncate_table("Water_Warning")
         # truncate_table("Reservoir_Warning")
