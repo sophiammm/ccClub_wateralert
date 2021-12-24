@@ -1,4 +1,4 @@
-from db_operator.read_from_db import check_warn, read_town_code, check_water_basinName, check_reservoir_name
+from db_operator.read_from_db import check_warn, read_town_code, read_water_station, check_reservoir_name
 # https://github.com/line/line-bot-sdk-python
 
 def input_text(get_message): # User打字輸入行政區
@@ -50,7 +50,7 @@ def input_text(get_message): # User打字輸入行政區
 
         if water_msg != "":
             water_msg = f'{water_msg}級警戒\n{waterLevel_remark[water_msg]}' # 加上級警戒和remark
-            water_basinName = f'({check_water_basinName(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
+            water_basinName = f'({read_water_station(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else: 
             water_msg = '無安全警示'
             water_basinName = ""
@@ -125,7 +125,7 @@ def input_location(get_message, latitude, longitude): # User發送位置資訊
 
         if water_msg != "":
             water_msg = f'{water_msg}級警戒\n{waterLevel_remark[water_msg]}' # 加上級警戒和remark
-            water_basinName = f'({check_water_basinName(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
+            water_basinName = f'({read_water_station(water_msg_stationNo)[0][0]})' # 得出水庫中文名稱並加上()
         else: 
             water_msg = '無安全警示'
             water_basinName = ""
