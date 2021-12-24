@@ -115,14 +115,13 @@ def check_reservoir_name(station_code):
         cur.close()
         return results
 
-
 def check_water_basinName(station_code):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
     try:
         cur.execute(
-            f"SELECT basinName FROM Water_Station WHERE stationNo='{station_code}';")
+            f"SELECT basinName, latitude, longitude FROM Water_Station WHERE stationNo='{station_code}';")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
