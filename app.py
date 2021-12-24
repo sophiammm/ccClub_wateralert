@@ -43,7 +43,7 @@ handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
 @app.route("/", methods=["GET", "POST"])
-def callback():
+def index():
 
     if request.method == "GET":
         return render_template("index.html")
