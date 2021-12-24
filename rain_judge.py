@@ -3,7 +3,7 @@ from geopy import distance
 from gps_address import in_range
 
 
-def opaeration(sql):
+def operation(sql):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
@@ -23,7 +23,7 @@ def opaeration(sql):
 def rain_judge_by_town(user_town_code):
     read_rain_warn_sql = "SELECT * FROM Rain_Warning"
     # staionNo, townCode, APItime, DBtime, warninglevel [1, 2]
-    datas = opaeration(read_rain_warn_sql)
+    datas = operation(read_rain_warn_sql)
     result = []
     warnings = []
     for data in datas:
@@ -47,10 +47,10 @@ def rain_judge_by_town(user_town_code):
 def rain_judge_by_location(latitude, longitude):
     read_rain_warn_sql = "SELECT * FROM Rain_Warning"
     # staionNo, townCode, APItime, DBtime, warninglevel [1, 2]
-    datas = opaeration(read_rain_warn_sql)
+    datas = operation(read_rain_warn_sql)
     # staionNo, latitude, longitude
     read_rain_station_sql = "SELECT * FROM Rain_Station"
-    stations = opaeration(read_rain_station_sql)
+    stations = operation(read_rain_station_sql)
     near_stations = []
     for station in stations:
         user_location = (latitude, longitude)
