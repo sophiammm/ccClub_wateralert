@@ -62,7 +62,7 @@ def read_address_by_town_code(townCode):
     results = []
     try:
         cur.execute(
-            f" cityName, tSELECTownName FROM City_Town WHERE townCode='{townCode}';")
+            f"SELECT cityName ,townName FROM City_Town WHERE townCode='{townCode}';")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
