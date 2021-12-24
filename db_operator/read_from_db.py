@@ -62,7 +62,7 @@ def read_address_by_town_code(townCode):
     results = []
     try:
         cur.execute(
-            f"SELECT cityName, townName FROM City_Town WHERE townCode='{townCode}';")
+            f" cityName, tSELECTownName FROM City_Town WHERE townCode='{townCode}';")
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
@@ -149,6 +149,7 @@ def check_reservoir_name(station_code):
     finally:
         cur.close()
         return results
+
 
 def check_water_basinName(station_code):
     postgres_manager = PostgresBaseManager()

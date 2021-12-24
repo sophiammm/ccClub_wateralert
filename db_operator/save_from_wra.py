@@ -270,14 +270,14 @@ def save_fake_to_rain_warning(stationNo="00H810", townCode="1000813", warningLev
     postgres_manager.close_connection()
 
 
-def save_fake_to_reservoir_warning(stationNo="30401", townCode="6700300", nextSpillTime=datetime.now, status="1: 放水中"):
+def save_fake_to_reservoir_warning(stationNo="30501", townCode="6700600", nextSpillTime="2021-12-27 12:08", status="'0: 預計放水'"):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
-    nextSpillStamp = date_to_stamp(str(nextSpillTime))
+    nextSpillStamp = date_to_stamp(nextSpillTime)
     try:
         cur.execute("""
             INSERT INTO reservoir_warning (stationno, townCode, nextSpillTime, status)
-            VALUES (%s, %s, %s);
+            VALUES (%s, %s, %s, %s);
             """,
                     (stationNo, townCode, nextSpillStamp, status))
     except Exception as e:
