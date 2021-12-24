@@ -8,10 +8,15 @@
 </head>
 
 <body>
-    <h1>This is home page.</h1>
+    {% extends 'nav.html' %}
+
+    {% block content %}
+    <h2>This is home page.</h2>
+
     <input type="button" onclick="location.href='/address'" value="Use address">
     <br>
     <input type="button" onclick="location.href='/location'" value="Use location">
+    {% endblock %}
 
 
 </body>

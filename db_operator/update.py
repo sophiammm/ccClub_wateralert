@@ -88,3 +88,19 @@ def update_reservoir_warning():
     cur.close()
     postgres_manager.close_connection()
     print("Operation completed")
+
+
+def update_user_location(id, lat, lon):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    sql = "INSERT INTO usrLocation (ownerID, latitude, longitude) VALUES %s ON conflict(ownerID) DO UPDATE SET latitude=EXCLUDED.latitude, longitude=EXCLUDED.longitude;"
+    rows = [(id, lat, lon)]
+    try:
+        extras.execute_values(cur, sql, rows)
+    except Exception as e:
+        print("Save failed.")
+        print(e)
+    postgres_manager.conn.commit()
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")

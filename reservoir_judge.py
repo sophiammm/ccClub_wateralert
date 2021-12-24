@@ -35,7 +35,7 @@ def reservoir_judge(user_town_code):
         status = data[5]
         # check time first to reduce times to read DB
         # in case if status doesn't fit time, all the cases in status "1" would be reported
-        if delta_time <= 10800 or status[0] == "1":
+        if delta_time <= 108000 or status[0] == "1":
             stationNo = data[0]
             get_affect_sql = f"SELECT townCode FROM Reservoir_AffectedArea WHERE stationNo='{stationNo}'"
             # [(townCode1), (townCode2),...]

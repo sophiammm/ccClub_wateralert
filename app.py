@@ -1,9 +1,11 @@
 import os
+from flask import Flask, abort, request, render_template, jsonify, g
 from wtforms import SelectField
 from flask_wtf import FlaskForm
 from db_operator.read_from_db import check_warn, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
+from db_operator.update import update_user_location
 from gps_address import gps_to_address
-from flask import Flask, abort, request, render_template, jsonify
+from auth import bp
 
 
 # https://github.com/line/line-bot-sdk-python
@@ -28,10 +30,9 @@ app.config.from_object(Config())
 # 測試階段先開啟DEBUG, 正式運行要關掉
 app.config['DEBUG'] = True
 
+
 # 定義表格
-
-
-class Form(FlaskForm):
+class AddressForm(FlaskForm):
     city = SelectField("city", choices=[])
     town = SelectField("town", choices=[])
 
@@ -58,6 +59,11 @@ def callback():
         return "OK"
 
 
+# auth route
+app.register_blueprint(bp)
+
+
+# search route
 @ app.route("/location", methods=["GET", "POST"])
 def locate():
     if request.method == "GET":
@@ -68,15 +74,18 @@ def locate():
             print("No data")
         else:
             print(data)
-            mark = (data["lat"], data["lon"])
+            lat = data["lat"]
+            lon = data["lon"]
+            mark = (lat, lon)
             address = gps_to_address(mark)
-
+            if g.user != None:
+                update_user_location(g.user["id"], lat, lon)
         return jsonify({"address": address})
 
 
 @ app.route("/address")
 def select():
-    form = Form()
+    form = AddressForm()
     form.city.choices = read_city()
     return render_template("select_box.html", form=form)
 
@@ -105,7 +114,7 @@ def search_request():
         water_warn = to_string(warns["water"])
         rain_warn = to_string(warns["rain"])
         reservoir_warn = to_string(warns["reservoir"])
-        return render_template("result2.html", address=address, water_warn=water_warn, rain_warn=rain_warn, reservoir_warn=reservoir_warn)
+        return render_template("result.html", address=address, water_warn=water_warn, rain_warn=rain_warn, reservoir_warn=reservoir_warn)
 
 
 @handler.add(MessageEvent, message=TextMessage)  # 根據行政區判斷Warning

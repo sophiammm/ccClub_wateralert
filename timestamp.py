@@ -8,11 +8,12 @@ def date_to_stamp(date: str) -> int:
     return timestamp
 
 
-def stamp_to_date(stamp: int) -> str:
+def stamp_to_date(stamp: int) -> datetime:
     dt = datetime.fromtimestamp(stamp)
     return dt
 
 
 if __name__ == "__main__":
     cur = datetime.now()
-    print(date_to_stamp(str(cur)))
+    no = date_to_stamp(str(cur))
+    print(stamp_to_date(no))

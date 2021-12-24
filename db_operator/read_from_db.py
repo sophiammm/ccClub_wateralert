@@ -1,13 +1,12 @@
 from db_operator.base_manager import PostgresBaseManager
 
 
-def read_table(table):
+def read(sql):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
     try:
-        cur.execute(
-            f"SELECT * FROM {table}")
+        cur.execute(sql)
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
         postgres_manager.conn.commit()
@@ -17,61 +16,27 @@ def read_table(table):
     finally:
         cur.close()
         return results
+
+
+def read_table(table):
+    read_table_sql = f"SELECT * FROM {table}"
+    return read(read_table_sql)
 
 
 # for web
 def read_city():
-    postgres_manager = PostgresBaseManager()
-    cur = postgres_manager.conn.cursor()
-    results = []
-    try:
-        cur.execute(
-            "SELECT DISTINCT cityCode, cityName FROM City_Town;")
-        # Retrieve all rows from the PostgreSQL table
-        results = cur.fetchall()
-        postgres_manager.conn.commit()
-    except Exception as e:
-        print("Read failed.")
-        print(e)
-    finally:
-        cur.close()
-        return results
+    read_city_sql = "SELECT DISTINCT cityCode, cityName FROM City_Town;"
+    return read(read_city_sql)
 
 
 def read_town_by_city_code(cityCode):
-    postgres_manager = PostgresBaseManager()
-    cur = postgres_manager.conn.cursor()
-    results = []
-    try:
-        cur.execute(
-            f"SELECT townCode, townName FROM City_Town WHERE cityCode='{cityCode}';")
-        # Retrieve all rows from the PostgreSQL table
-        results = cur.fetchall()
-        postgres_manager.conn.commit()
-    except Exception as e:
-        print("Read failed.")
-        print(e)
-    finally:
-        cur.close()
-        return results
+    read_town_by_city_code_sql = f"SELECT townCode, townName FROM City_Town WHERE cityCode='{cityCode}';"
+    return read(read_town_by_city_code_sql)
 
 
 def read_address_by_town_code(townCode):
-    postgres_manager = PostgresBaseManager()
-    cur = postgres_manager.conn.cursor()
-    results = []
-    try:
-        cur.execute(
-            f"SELECT cityName ,townName FROM City_Town WHERE townCode='{townCode}';")
-        # Retrieve all rows from the PostgreSQL table
-        results = cur.fetchall()
-        postgres_manager.conn.commit()
-    except Exception as e:
-        print("Read failed.")
-        print(e)
-    finally:
-        cur.close()
-        return results
+    read_address_by_town_code_sql = f"SELECT cityName ,townName FROM City_Town WHERE townCode='{townCode}';"
+    return read(read_address_by_town_code_sql)
 
 # linebot
 

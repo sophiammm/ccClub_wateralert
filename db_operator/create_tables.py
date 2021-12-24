@@ -96,3 +96,41 @@ def create_water_related_table():
     cur.close()
     postgres_manager.close_connection()
     print("Operation completed")
+
+
+def create_user_table():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    cur.execute(
+        """
+        CREATE TABLE Usr (
+            id SERIAL PRIMARY KEY NOT NULL,
+            usrName varchar(20) NOT NULL,
+            email varchar(50) UNIQUE NOT NULL ,
+            password TEXT NOT NULL
+        );
+        """
+    )
+    postgres_manager.conn.commit()
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")
+
+
+def create_user_loc_table():
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor()
+    cur.execute(
+        """
+        CREATE TABLE usrLocation (
+            ownerID INTEGER PRIMARY KEY NOT NULL,
+            latitude decimal(11,7),
+            longitude decimal(11,7),
+            FOREIGN KEY (ownerID) REFERENCES Usr (id)
+        );
+        """
+    )
+    postgres_manager.conn.commit()
+    cur.close()
+    postgres_manager.close_connection()
+    print("Operation completed")

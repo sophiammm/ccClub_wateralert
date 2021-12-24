@@ -8,11 +8,15 @@
 </head>
 
 <body>
+    {% extends 'nav.html' %}
 
+    {% block content %}
     <p>Click the button to get your coordinates.</p>
-
-    <button onclick="getLocation()">Try It</button>
-
+    {% if g.user %}
+    <button onclick="getLocation()">Update my location</button>
+    {% else %}
+    <button onclick="getLocation()">Try it</button>
+    {% endif %}
     <p id="demo"></p>
 
     <script>
@@ -26,7 +30,7 @@
                 x.innerHTML = "Geolocation is not supported by this browser.";
             }
         };
-        function showPosition(position) {
+        function showPosition(position,) {
             //Obj of data to send in future like a dummyDb
             const data = { lat: position.coords.latitude, lon: position.coords.longitude };
             console.log(position.coords);
@@ -53,6 +57,9 @@
                 });
         }
     </script>
+
+
+    {% endblock %}
 </body>
 
 </html>
