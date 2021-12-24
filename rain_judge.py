@@ -1,5 +1,6 @@
 from db_operator.base_manager import PostgresBaseManager
 from geopy import distance
+from gps_address import in_range
 
 
 def opaeration(sql):
@@ -33,13 +34,15 @@ def rain_judge_by_town(user_town_code):
     
     warnings.sort(reverse = True)
     if warnings == []:
-        msg = {"warningLevel": " "}
+        msg = {"warningLevel": 0}
         result.append(msg)
     else:
         msg = {"warningLevel": warnings[0]}
         result.append(msg)
 
     return result
+    # 0: 沒有警戒; 1: 一級警戒; 2: 二級警戒
+
 
 def rain_judge_by_location(latitude, longitude):
     read_rain_warn_sql = "SELECT * FROM Rain_Warning"
@@ -52,11 +55,12 @@ def rain_judge_by_location(latitude, longitude):
     for station in stations:
         user_location = (latitude, longitude)
         station_location = (station[1], station[2])
-        distance_between = distance.distance(user_location, station_location).km
+        is_close = in_range(user_location, station_location, 5)
         stationno = station[0]
-        if distance_between <= 5:
+        if is_close:
             near_stations.append(stationno)
-    
+
+
     result = []
     warnings = []
     for i in range(len(near_stations)):
@@ -66,13 +70,14 @@ def rain_judge_by_location(latitude, longitude):
     
     warnings.sort(reverse = True)
     if warnings == []:
-        msg = {"warningLevel": " "}
+        msg = {"warningLevel": 0}
         result.append(msg)
     else:
         msg = {"warningLevel": warnings[0]}
         result.append(msg)
 
     return result
+    # 0: 沒有警戒; 1: 一級警戒; 2: 二級警戒
 
 
 if __name__ == "__main__":
