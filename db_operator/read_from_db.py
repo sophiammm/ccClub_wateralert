@@ -115,7 +115,7 @@ def check_reservoir_name(station_code):
         cur.close()
         return results
 
-def check_water_basinName(station_code):
+def read_water_station(station_code):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
