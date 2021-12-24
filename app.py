@@ -87,7 +87,7 @@ def locate():
 def select():
     form = AddressForm()
     form.city.choices = read_city()
-    return render_template("select_box.html", form=form)
+    return render_template("address.html", form=form)
 
 
 @ app.route("/select/town/<city_code>")

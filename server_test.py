@@ -5,7 +5,7 @@ import os
 from flask_wtf import FlaskForm
 from flask_apscheduler import APScheduler
 from db_operator.save_from_wra import save_reservoir_warning, save_rain_warning, save_water_warning, truncate_table
-from db_operator.update_from_wra import update_rain_warning, update_water_warning, update_reservoir_warning, update_user_location
+from db_operator.update import update_rain_warning, update_water_warning, update_reservoir_warning, update_user_location
 from db_operator.read_from_db import read_table, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
 from gps_address import gps_to_address
 from timestamp import stamp_to_date
