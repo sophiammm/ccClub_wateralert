@@ -1,6 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
-from db_operator.update_from_wra import update_rain_warning, update_water_warning, update_reservoir_warning
+from db_operator.update import update_rain_warning, update_water_warning, update_reservoir_warning
 
 sched = BlockingScheduler()
 
