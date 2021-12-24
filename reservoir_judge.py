@@ -3,7 +3,7 @@ from db_operator.base_manager import PostgresBaseManager
 from db_operator.save_from_wra import save_fake_to_reservoir_warning
 
 
-def opaeration(sql):
+def operation(sql):
     postgres_manager = PostgresBaseManager()
     cur = postgres_manager.conn.cursor()
     results = []
@@ -26,7 +26,7 @@ def opaeration(sql):
 def reservoir_judge(user_town_code):
     read_re_warn_sql = "SELECT * FROM Reservoir_Warning"
     # staionNo, townCode, APItime, DBtime, nextSpillTime, status ['0: 預計放水', '1: 放水中', '-1: 未放水']
-    datas = opaeration(read_re_warn_sql)
+    datas = operation(read_re_warn_sql)
     result = []
     for data in datas:
         nextSpillTime = datetime.fromtimestamp(data[4])
@@ -39,13 +39,13 @@ def reservoir_judge(user_town_code):
             stationNo = data[0]
             get_affect_sql = f"SELECT townCode FROM Reservoir_AffectedArea WHERE stationNo='{stationNo}'"
             # [(townCode1), (townCode2),...]
-            affect_area = opaeration(get_affect_sql)
+            affect_area = operation(get_affect_sql)
             for i in affect_area:
                 # if user in the affected area and nextSpillTime - cur_time <= 3hr(10800sec)
                 if user_town_code == i[0]:
                     get_reservoir_name_sql = f"SELECT stationName FROM Reservoir_Station WHERE stationNo='{stationNo}'"
                     # [(stationName)] => String
-                    reservoir_name = opaeration(get_reservoir_name_sql)[0][0]
+                    reservoir_name = operation(get_reservoir_name_sql)[0][0]
                     msg = {"reservoir_name": reservoir_name,
                            "nextSpillTime": nextSpillTime, "status": status}
                     result.append(msg)
