@@ -2,7 +2,7 @@ import os
 from flask import Flask, abort, request, render_template, jsonify, g
 from wtforms import SelectField
 from flask_wtf import FlaskForm
-from db_operator.read_from_db import read_city, read_town_by_city_code, read_address_by_town_code
+from db_operator.read_from_db import read_city, read_town_by_city_code, read_address_by_town_code, read_town_code
 from db_operator.update import update_user_location
 from judgement.initial_check import message_text, message_location
 from gps_address import gps_to_address
@@ -91,6 +91,21 @@ def locate():
         return jsonify({"address": address})
 
 
+@ app.route("/location/result", methods=["POST"])
+def test():
+    if request.method == "POST":
+        data = request.values
+        lat = float(data["lat"])
+        lon = float(data["lon"])
+        address = data["address"]
+        town_code = read_town_code(address[:3], address[3:])
+        msg = input_location(town_code, lat, lon)
+        water_msgs = msg["water"].split("\n")
+        rain_msgs = msg["rain"].split("\n")
+        reservoir_msgs = msg["reservoir"].split("\n")
+        return render_template("result.html", address=address, lat=lat, lon=lon, water_msgs=water_msgs, rain_msgs=rain_msgs, reservoir_msgs=reservoir_msgs)
+
+
 @ app.route("/address")
 def select():
     form = AddressForm()
@@ -104,7 +119,7 @@ def town_by_city(city_code):
     return jsonify({"town_city": towns})
 
 
-@ app.route("/result", methods=['POST'])
+@ app.route("/address/result", methods=['POST'])
 def search_request():
     if request.method == 'POST':
         town_code = request.values["town"]
@@ -113,7 +128,7 @@ def search_request():
         water_msgs = msg["water"].split("\n")
         rain_msgs = msg["rain"].split("\n")
         reservoir_msgs = msg["reservoir"].split("\n")
-        return render_template("result.html", address=address, water_msgs=water_msgs, rain_msgs=rain_msgs, reservoir_msgs=reservoir_msgs)
+        return render_template("result.html", address=address, lat="", lon="", water_msgs=water_msgs, rain_msgs=rain_msgs, reservoir_msgs=reservoir_msgs)
 
 
 @handler.add(MessageEvent, message=TextMessage)  # 根據行政區判斷Warning

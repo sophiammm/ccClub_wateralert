@@ -11,11 +11,11 @@
     {% extends 'nav.html' %}
 
     {% block content %}
-    <h2>This is home page.</h2>
+    <h4>請選擇查詢方式</h4>
 
-    <input type="button" onclick="location.href='/address'" value="Use address">
+    <input type="button" onclick="location.href='/address'" value="使用行政區查詢">
     <br>
-    <input type="button" onclick="location.href='/location'" value="Use location">
+    <input type="button" onclick="location.href='/location'" value="使用GPS位置查詢">
     {% endblock %}
 
 

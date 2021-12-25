@@ -9,8 +9,14 @@
 </head>
 
 <body>
+    {% extends 'nav.html' %}
+    {% block content %}
     <h1>搜尋結果</h1>
     <h2>目前位置:{{address}}</h2>
+    {% if lat and lon %}
+    <h4>緯度:{{lat}}</h4>
+    <h4>經度:{{lon}}</h4>
+    {% endif %}
     <h3>此區域的水情狀況⬇</h3>
     <div>
         <h3>河川:</h3>
@@ -33,6 +39,7 @@
         {% endfor %}
     </div>
     <input type="button" onclick="location.href='/'" value="回首頁">
+    {% endblock %}
 </body>
 
 </html>
