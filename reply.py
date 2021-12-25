@@ -47,12 +47,7 @@ def input_text(user_town_code):  # User打字輸入行政區
     return water_condition
 
 
-def input_location(get_message, latitude, longitude):  # User發送位置資訊
-    if message_location(get_message) is False:  # 基本檢查是否為5-7個字，以及確認是否有出現'縣市鄉鎮市區'字樣
-        return "⚠️請重新發送位置資訊。"
-    else:
-        user_town_code = message_location(get_message)
-
+def input_location(user_town_code, latitude, longitude):  # User發送位置資訊
     waterLevel_remark = {1: '河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
                          2: '河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
                          3: '河川水位預計未來2小時到達高灘地之水位。'
@@ -89,9 +84,7 @@ def input_location(get_message, latitude, longitude):  # User發送位置資訊
                 f"{reservoir_result['reservoir_name']}的放水狀態為: {reservoir_result['status']}。\n預計放水時間為: {reservoir_result['nextSpillTime']}。")
         reservoir_msg = "\n".join(reservoir_msg)  # list轉str，並換行。
 
-    water_condition = {'河川': water_msg, '雨勢': rain_msg, '水庫': reservoir_msg}
-    # e.g. {"河川":"str", "雨勢":"str", "水庫":"str"}
+    water_condition = {'water': water_msg,
+                       'rain': rain_msg, 'reservoir': reservoir_msg}
 
-    reply = f"您輸入的是: \n{get_message}\n\n此區域的水情狀況⬇\n\n河川: \n{water_condition['河川']}\n\n雨勢: \n{water_condition['雨勢']}\n\n水庫: \n{water_condition['水庫']}"
-
-    return reply
+    return water_condition
