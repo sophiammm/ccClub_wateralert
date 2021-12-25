@@ -15,7 +15,7 @@ def save_warn_from_wra():
     update_reservoir_warning()
 
 
-@sched.scheduled_job('interval', id='send_warn', minute=3)
+@sched.scheduled_job('interval', id='send_warn', minutes=3)
 def send_mail():
     usr_id = 2
     sql = f"SELECT usrname, email from Usr WHERE id='{usr_id}';"
