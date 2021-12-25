@@ -1,8 +1,7 @@
 import sys
 sys.path.append("../")
 
-from db_operator.base_manager import PostgresBaseManager
-from db_operator.read_from_db import read_water_station, read
+from db_operator.read_from_db import read
 from gps_address import in_range
 
 def rain_judge_by_town(user_town_code):
@@ -77,4 +76,3 @@ if __name__ == "__main__":
     print(rain_judge_by_town(user_town_code))
 
     # print(rain_judge_by_location(24.815376, 121.726958))
-
