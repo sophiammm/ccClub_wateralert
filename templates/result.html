@@ -9,23 +9,30 @@
 </head>
 
 <body>
-    <h1>Result Page</h1>
+    <h1>搜尋結果</h1>
     <h2>目前位置:{{address}}</h2>
+    <h3>此區域的水情狀況⬇</h3>
     <div>
-        <h3>水位狀況</h3>
-        <p>警戒:{{water_warn}}</p>
+        <h3>河川:</h3>
+        {% for water_msg in water_msgs %}
+        <p>{{water_msg}}</p>
+        {% endfor %}
     </div>
     <br>
     <div>
-        <h3>雨量狀況</h3>
-        <p>警戒:{{rain_warn}}</p>
+        <h3>雨勢:</h3>
+        {% for rain_msg in rain_msgs %}
+        <p>{{rain_msg}}</p>
+        {% endfor %}
     </div>
     <br>
     <div>
-        <h3>水庫狀況</h3>
-        <p>目前狀態:{{reservoir_warn}}</p>
+        <h3>水庫:</h3>
+        {% for reservoir_msg in reservoir_msgs %}
+        <p>{{reservoir_msg}}</p>
+        {% endfor %}
     </div>
-    <input type="button" onclick="location.href='/'" value="Go to index">
+    <input type="button" onclick="location.href='/'" value="回首頁">
 </body>
 
 </html>
