@@ -31,10 +31,15 @@ class Config:
 
 
 # init server
-app = Flask(__name__)
-app.config.from_object(Config())
-# 測試階段先開啟DEBUG, 正式運行要關掉
-app.config['DEBUG'] = True
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config())
+    # 測試階段先開啟DEBUG, 正式運行要關掉
+    app.config['DEBUG'] = True
+    return app
+
+
+app = create_app()
 
 
 # set mail function
