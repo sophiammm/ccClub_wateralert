@@ -20,6 +20,7 @@ class PostgresBaseManager:
     # for server run
     def __init__(self):
         # 讀取環境變數
+        load_dotenv(dotenv_path='.env', override=True)
         self.database = os.getenv("DATABASE_sql")
         self.user = os.getenv("USER_sql")
         self.password = os.getenv("PASSWORD_sql")
