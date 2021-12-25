@@ -1,4 +1,5 @@
 from db_operator.base_manager import PostgresBaseManager
+from psycopg2 import extras
 
 
 def read(sql):
@@ -9,6 +10,23 @@ def read(sql):
         cur.execute(sql)
         # Retrieve all rows from the PostgreSQL table
         results = cur.fetchall()
+        postgres_manager.conn.commit()
+    except Exception as e:
+        print("Read failed.")
+        print(e)
+    finally:
+        cur.close()
+        return results
+
+
+def read_one(sql):
+    postgres_manager = PostgresBaseManager()
+    cur = postgres_manager.conn.cursor(cursor_factory=extras.DictCursor)
+    results = []
+    try:
+        cur.execute(sql)
+        # Retrieve one row from the PostgreSQL table
+        results = cur.fetchone()
         postgres_manager.conn.commit()
     except Exception as e:
         print("Read failed.")
@@ -114,6 +132,7 @@ def check_reservoir_name(station_code):
     finally:
         cur.close()
         return results
+
 
 def read_water_station(station_code):
     postgres_manager = PostgresBaseManager()

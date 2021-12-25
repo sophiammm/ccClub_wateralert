@@ -41,10 +41,10 @@ app.config['DEBUG'] = True
 mail = Mail(app)
 
 
-def send_warn():
-    msg = Message('Hello', sender=os.getenv("MAIL_USERNAME"),
-                  recipients=['violetlan1122@gmail.com'])
-    msg.body = "Hello Flask message sent from Flask-Mail"
+def send_warn(user_email, info):
+    msg = Message('Water Alert', sender=os.getenv("MAIL_USERNAME"),
+                  recipients=[user_email])
+    msg.body = f"{info}"
     try:
         mail.send(msg)
         return "Sent"
@@ -81,9 +81,8 @@ def index():
 
         return "OK"
 
+
 # test mail
-
-
 @app.route("/mail")
 def test():
     return send_warn()
