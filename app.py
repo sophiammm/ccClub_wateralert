@@ -46,9 +46,9 @@ app = create_app()
 mail = Mail(app)
 
 
-def send_warn(user_email, info):
+def send_warn(usr_email, info):
     msg = Message('Water Alert', sender=os.getenv("MAIL_USERNAME"),
-                  recipients=[user_email])
+                  recipients=[usr_email])
     msg.body = f"{info}"
     try:
         mail.send(msg)
@@ -90,7 +90,7 @@ def index():
 # test mail
 @app.route("/mail")
 def test():
-    return send_warn()
+    return send_warn("violetlan1122@gmail.com", "from web route")
 
 
 # auth route
