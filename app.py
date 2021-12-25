@@ -109,7 +109,7 @@ def search_request():
     if request.method == 'POST':
         town_code = request.values["town"]
         address = "".join(read_address_by_town_code(town_code)[0])
-        msg = input_text(address)
+        msg = input_text(town_code)
         water_msgs = msg["water"].split("\n")
         rain_msgs = msg["rain"].split("\n")
         reservoir_msgs = msg["reservoir"].split("\n")
