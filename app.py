@@ -22,12 +22,6 @@ class Config:
     SCHEDULER_API_ENABLED = True
     SCHEDULER_TIMEZONE = "Asia/Taipei"  # <========== 設置時區, 時區不一致可能會導致任務時間出錯
     SECRET_KEY = os.getenv("CSRF_KEY")
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 587
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
 
 
 # init server
@@ -45,18 +39,6 @@ app = create_app()
 
 # set mail function
 mail = Mail(app)
-
-
-def send_warn(usr_email, info):
-    msg = Message('Water Alert', sender=os.getenv("MAIL_USERNAME"),
-                  recipients=[usr_email])
-    msg.body = f"{info}"
-    try:
-        mail.send(msg)
-        return "Sent"
-    except Exception as e:
-        print(e)
-        return "Error"
 
 
 # 定義表格
@@ -86,12 +68,6 @@ def index():
             abort(400)
 
         return "OK"
-
-
-# test mail
-@app.route("/mail")
-def test():
-    return send_warn("violetlan1122@gmail.com", "from web route")
 
 
 # auth route
