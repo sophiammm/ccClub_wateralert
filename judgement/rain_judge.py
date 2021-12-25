@@ -61,18 +61,3 @@ def rain_judge_by_location(latitude, longitude):
 
     return result
     # 0: 沒有警戒; 1: 一級警戒; 2: 二級警戒
-
-
-if __name__ == "__main__":
-    # no case
-    # user_town_code = "6300400"
-
-    # # fit 1 case
-    # user_town_code = "1001301"
-
-    # fit 2 case
-    user_town_code = "6500900"
-
-    print(rain_judge_by_town(user_town_code))
-
-    # print(rain_judge_by_location(24.815376, 121.726958))
