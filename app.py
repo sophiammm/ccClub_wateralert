@@ -1,12 +1,13 @@
 import os
 from flask import Flask, abort, request, render_template, jsonify, g
-from flask_mail import Mail, Message
 from wtforms import SelectField
 from flask_wtf import FlaskForm
-from db_operator.read_from_db import check_warn, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
+from db_operator.read_from_db import read_city, read_town_by_city_code, read_address_by_town_code
 from db_operator.update import update_user_location
+from judgement.initial_check import message_text, message_location
 from gps_address import gps_to_address
 from auth import bp
+from reply import input_text
 
 
 # https://github.com/line/line-bot-sdk-python
@@ -35,10 +36,6 @@ def create_app():
 
 
 app = create_app()
-
-
-# set mail function
-mail = Mail(app)
 
 
 # 定義表格
@@ -112,28 +109,28 @@ def search_request():
     if request.method == 'POST':
         town_code = request.values["town"]
         address = "".join(read_address_by_town_code(town_code)[0])
-        warns = check_warn(town_code)
-
-        def to_string(warns):
-            if warns == []:
-                return "\nNo warn."
-            else:
-                msg = "\n"
-                for warn in warns:
-                    msg += "".join(str(warn))
-                return msg
-        water_warn = to_string(warns["water"])
-        rain_warn = to_string(warns["rain"])
-        reservoir_warn = to_string(warns["reservoir"])
-        return render_template("result.html", address=address, water_warn=water_warn, rain_warn=rain_warn, reservoir_warn=reservoir_warn)
+        msg = input_text(address)
+        water_msgs = msg["water"].split("\n")
+        rain_msgs = msg["rain"].split("\n")
+        reservoir_msgs = msg["reservoir"].split("\n")
+        return render_template("result.html", address=address, water_msgs=water_msgs, rain_msgs=rain_msgs, reservoir_msgs=reservoir_msgs)
 
 
 @handler.add(MessageEvent, message=TextMessage)  # 根據行政區判斷Warning
 def handle_message_text(event):
     get_message = event.message.text
+    # get user_town_code
+    user_town_code = message_text(get_message)
+    # 基本檢查是否為5-7個字，以及確認是否有出現'縣市鄉鎮市區'字樣
+    if not user_town_code:
+        msg = "⚠️請檢查欲查詢水情之行政區的錯字或遺漏字，並符合5至7個字。\n例如: 嘉義縣阿里山鄉、臺東縣成功鎮、南投縣南投市、臺中市西區。\n\n⚠️或是在介面左下方「＋」選擇位置資訊，並根據您的所在位置或是指定位置發送給我。"
+    else:
+        # e.g. {"河川":"str", "雨勢":"str", "水庫":"str"}
+        water_condition = input_text(user_town_code)
+        msg = f"您輸入的是: \n{get_message}\n\n此區域的水情狀況⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}"
     # Send To Line
     reply = TextSendMessage(
-        text=input_text(get_message))
+        text=msg)
     line_bot_api.reply_message(event.reply_token, reply)
 
 

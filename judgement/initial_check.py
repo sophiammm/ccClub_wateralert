@@ -4,31 +4,31 @@ from db_operator.read_from_db import read_town_code
 def message_text(get_message):
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
     if len(get_message) < 5 or len(get_message) > 7:  # 行政區總共5到7個字而已
-        result = False
+        result = ""
     elif '鄉' not in get_message and '鎮' not in get_message and '市' not in get_message and '區' not in get_message:
-        result = False
+        result = ""
     elif get_message[2] != '縣' and get_message[2] != '市':  # 第3個字不是縣也不是市
-        result = False
+        result = ""
     elif get_message[-1] != '鄉' and get_message[-1] != '鎮' and get_message[-1] != '市' and get_message[-1] != '區':
-        result = False
+        result = ""
     else:
         city = get_message[:3]
         town = get_message[3:]
-        try: # 若在Database找不到User輸入的內容，就跑except
+        try:  # 若在Database找不到User輸入的內容，就跑except
             result = read_town_code(city, town)[0][0]
         except:
-            result = False
+            result = ""
 
-    return result # return user_town_code
+    return result  # return user_town_code
 
 
 def message_location(get_message):
     get_message = get_message.replace('台', '臺')  # 先將「台」轉換成「臺」，因為Database一律用「臺」
-    try: # 若在Database找不到User輸入的內容，就跑except
+    try:  # 若在Database找不到User輸入的內容，就跑except
         index = get_message.find('灣')
-        city = get_message[index+1:index+4] # 縣市級都只有三個字，e.g. 桃園市
+        city = get_message[index+1:index+4]  # 縣市級都只有三個字，e.g. 桃園市
         town = []
-        i = index+4 # 從縣市後第一個字開始抓取
+        i = index+4  # 從縣市後第一個字開始抓取
         while get_message[i] != '鄉' and get_message[i] != '鎮' and get_message[i] != '市' and get_message[i] != '區':  # 遇上這四個字，就取消索引的抓取
             town.append(get_message[i])
             i += 1
@@ -40,6 +40,6 @@ def message_location(get_message):
         town = "".join(town)  # 正式將town轉成str
         result = read_town_code(city, town)[0][0]
     except:
-        result = False
-    
-    return result # return user_town_code
+        result = ""
+
+    return result  # return user_town_code
