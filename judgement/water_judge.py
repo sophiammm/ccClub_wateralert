@@ -59,5 +59,12 @@ def water_judge_by_location(latitude, longitude):
                     final_warnings.update({station_basinName:warning[1]}) # 若更嚴重，就覆蓋字典裡的value
             else: # final_warnings字典裡未包含此流域
                 final_warnings.update({station_basinName:warning[1]}) # 新增此流域至字典裡
-    return final_warnings # e.g. {'大甲溪': 1, '大安溪': 2} 若無警戒，則return {}
+
+    result = []
+    for key in final_warnings:
+        msg = {"basinName": key, "warningLevel": final_warnings[key]}
+        result.append(msg)
+
+    return result # e.g. [{'basinName': '大甲溪', 'warningLevel': 1}, {'basinName': '大安溪', 'warningLevel': 2}]
+    # 若無警戒，則return []
 
