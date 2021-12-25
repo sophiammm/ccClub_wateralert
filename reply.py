@@ -10,21 +10,31 @@ def input_text(get_message): # User打字輸入行政區
     else:
         user_town_code = message_text(get_message)
 
+    waterLevel_remark = {1:'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
+            2:'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
+            3:'河川水位預計未來2小時到達高灘地之水位。'
+        }
     water_msg = []
     water_results = water_judge_by_town(user_town_code)
     if water_results == []:
         water_msg = '無警戒。'
     else: 
         for water_result in water_results:
-            water_msg.append(f"{water_result['basinName']}有{water_result['warningLevel']}級警戒。")
+            water_msg.append(
+                f"{water_result['basinName']}有{water_result['warningLevel']}級警戒。\n{waterLevel_remark[water_result['warningLevel']]}")
         water_msg = "\n".join(water_msg) # list轉str，並換行。
 
+    rainLevel_remark = {1:'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
+            2:'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
+        }
     rain_msg = ""
     rain_result = rain_judge_by_town(user_town_code)[0]
     # e.g. 會取[0]是因為return出來是[{'warningLevel': 1}]，而rain的list只會有一個字典，所以無需像water使用for取出每個字典。
     rain_msg = f"{rain_result['warningLevel']}級警戒。"
     if rain_msg == "0級警戒。":
         rain_msg = '無警戒。'
+    else:
+        rain_msg = f"{rain_result['warningLevel']}級警戒。\n{rainLevel_remark[rain_result['warningLevel']]}"
 
     reservoir_msg = []
     reservoir_results = reservoir_judge(user_town_code)
@@ -33,21 +43,13 @@ def input_text(get_message): # User打字輸入行政區
     else: 
         for reservoir_result in reservoir_results:
             reservoir_msg.append(
-                f"{reservoir_result['reservoir_name']}的放水狀態為{reservoir_result['status']}。\n預計放水時間為{reservoir_result['nextSpillTime']}。")
+                f"{reservoir_result['reservoir_name']}的放水狀態為: {reservoir_result['status']}。\n預計放水時間為: {reservoir_result['nextSpillTime']}。")
         reservoir_msg = "\n".join(reservoir_msg) # list轉str，並換行。
 
     water_condition = {'河川':water_msg, '雨勢':rain_msg, '水庫':reservoir_msg}
     # e.g. {"河川":"str", "雨勢":"str", "水庫":"str"}
 
-    #     waterLevel_remark = {'1':'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
-    #         '2':'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
-    #         '3':'河川水位預計未來2小時到達高灘地之水位。'
-    #     }
-    #     rainLevel_remark = {'1':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
-    #         '2':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
-    #     }
-
-    reply = f"您輸入的是: {get_message}\n此區域的水情狀況⬇\n河川: \n{water_condition['河川']}\n\n雨勢: \n{water_condition['雨勢']}\n\n水庫: \n{water_condition['水庫']}"
+    reply = f"您輸入的是: \n{get_message}\n\n此區域的水情狀況⬇\n\n河川: \n{water_condition['河川']}\n\n雨勢: \n{water_condition['雨勢']}\n\n水庫: \n{water_condition['水庫']}"
     
     return reply
 
@@ -58,21 +60,31 @@ def input_location(get_message, latitude, longitude): # User發送位置資訊
     else:
         user_town_code = message_location(get_message)
 
+    waterLevel_remark = {1:'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
+            2:'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
+            3:'河川水位預計未來2小時到達高灘地之水位。'
+        }
     water_msg = []
     water_results = water_judge_by_location(latitude, longitude)
     if water_results == []:
         water_msg = '無警戒。'
     else: 
         for water_result in water_results:
-            water_msg.append(f"{water_result['basinName']}有{water_result['warningLevel']}級警戒。")
+            water_msg.append(
+                f"{water_result['basinName']}有{water_result['warningLevel']}級警戒。\n{waterLevel_remark[water_result['warningLevel']]}")
         water_msg = "\n".join(water_msg) # list轉str，並換行。
 
+    rainLevel_remark = {1:'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
+        2:'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
+    }
     rain_msg = ""
     rain_result = rain_judge_by_location(latitude, longitude)[0]
     # e.g. 會取[0]是因為return出來是[{'warningLevel': 1}]，而rain的list只會有一個字典，所以無需像water使用for取出每個字典。
     rain_msg = f"{rain_result['warningLevel']}級警戒。"
     if rain_msg == "0級警戒。":
         rain_msg = '無警戒。'
+    else:
+        rain_msg = f"{rain_result['warningLevel']}級警戒。\n{rainLevel_remark[rain_result['warningLevel']]}"
 
     reservoir_msg = []
     reservoir_results = reservoir_judge(user_town_code)
@@ -81,20 +93,12 @@ def input_location(get_message, latitude, longitude): # User發送位置資訊
     else: 
         for reservoir_result in reservoir_results:
             reservoir_msg.append(
-                f"{reservoir_result['reservoir_name']}的放水狀態為{reservoir_result['status']}。\n預計放水時間為{reservoir_result['nextSpillTime']}。")
+                f"{reservoir_result['reservoir_name']}的放水狀態為: {reservoir_result['status']}。\n預計放水時間為: {reservoir_result['nextSpillTime']}。")
         reservoir_msg = "\n".join(reservoir_msg) # list轉str，並換行。
 
     water_condition = {'河川':water_msg, '雨勢':rain_msg, '水庫':reservoir_msg}
     # e.g. {"河川":"str", "雨勢":"str", "水庫":"str"}
 
-    #     waterLevel_remark = {'1':'河川水位預計未來2小時到達計畫洪水位(或堤頂)時之水位。',
-    #         '2':'河川水位預計未來5小時到達計畫洪水位(或堤頂)時之水位。',
-    #         '3':'河川水位預計未來2小時到達高灘地之水位。'
-    #     }
-    #     rainLevel_remark = {'1':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率已開始積淹水。',
-    #         '2':'發布淹水警戒之鄉(鎮、市、區)如持續降雨，其轄內易淹水村里有70%機率三小時內開始積淹水。'
-    #     }
-
-    reply = f"您輸入的是: {get_message}\n此區域的水情狀況⬇\n河川: \n{water_condition['河川']}\n\n雨勢: \n{water_condition['雨勢']}\n\n水庫: \n{water_condition['水庫']}"
+    reply = f"您輸入的是: \n{get_message}\n\n此區域的水情狀況⬇\n\n河川: \n{water_condition['河川']}\n\n雨勢: \n{water_condition['雨勢']}\n\n水庫: \n{water_condition['水庫']}"
     
     return reply
