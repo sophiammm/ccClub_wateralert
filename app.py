@@ -1,5 +1,6 @@
 import os
 from flask import Flask, abort, request, render_template, jsonify, g
+from flask_mail import Mail, Message
 from wtforms import SelectField
 from flask_wtf import FlaskForm
 from db_operator.read_from_db import check_warn, read_city, read_town_by_city_code, read_address_by_town_code, check_warn
@@ -15,13 +16,18 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, LocationMessage
 from reply import input_text, input_location
 
+
 # set configuration values
-
-
 class Config:
     SCHEDULER_API_ENABLED = True
     SCHEDULER_TIMEZONE = "Asia/Taipei"  # <========== 設置時區, 時區不一致可能會導致任務時間出錯
     SECRET_KEY = os.getenv("CSRF_KEY")
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 587
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
 
 
 # init server
@@ -29,6 +35,22 @@ app = Flask(__name__)
 app.config.from_object(Config())
 # 測試階段先開啟DEBUG, 正式運行要關掉
 app.config['DEBUG'] = True
+
+
+# set mail function
+mail = Mail(app)
+
+
+def send_warn():
+    msg = Message('Hello', sender=os.getenv("MAIL_USERNAME"),
+                  recipients=['violetlan1122@gmail.com'])
+    msg.body = "Hello Flask message sent from Flask-Mail"
+    try:
+        mail.send(msg)
+        return "Sent"
+    except Exception as e:
+        print(e)
+        return "Error"
 
 
 # 定義表格
@@ -42,6 +64,7 @@ line_bot_api = LineBotApi(os.environ.get("CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("CHANNEL_SECRET"))
 
 
+# route
 @app.route("/", methods=["GET", "POST"])
 def index():
 
@@ -57,6 +80,13 @@ def index():
             abort(400)
 
         return "OK"
+
+# test mail
+
+
+@app.route("/mail")
+def test():
+    return send_warn()
 
 
 # auth route
