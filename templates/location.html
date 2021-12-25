@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" Content-Ty>
-    <style>
-        .isHide {
-            display: none;
-        }
-    </style>
-    <title>location</title>
-</head>
+{% include "header.html" %}
 
 <body>
-    {% extends 'nav.html' %}
+    <div class="container my-col">
+        <div class="row">
+            {% extends 'nav.html' %}
+            {% block content %}
+            <div class="col-md-12">
+                <p>按下按鈕定位</p>
+                {% if g.user %}
+                <button class="btn my-btn" onclick="getLocation()">更新使用者所在位置</button>
+                {% else %}
+                <button class="btn my-btn" onclick="getLocation()">開始定位</button>
+                <br>
+                {% endif %}
+                <div>
+                    <p id="receive"></p>
+                </div>
+                <div class="form-group" id="send"></div>
+            </div>
+        </div>
+    </div>
 
-    {% block content %}
-    <p>按下按鈕定位</p>
-    {% if g.user %}
-    <button onclick="getLocation()">更新使用者所在位置</button>
-    {% else %}
-    <button onclick="getLocation()">開始定位</button>
-    {% endif %}
 
-    <p id="receive"></p>
-    <div id="send"></div>
 
 
     <script>
@@ -65,7 +65,7 @@
                         '<input type="hidden" name="lat" value="' + lat + '">' +
                         '<input type="hidden" name="lon" value="' + lon + '">' +
                         '<input type="hidden" name="address" value="' + address + '">' +
-                        '<input type="submit" name="send" value="查詢警報">' +
+                        '<input class="btn my-btn" type="submit" name="send" value="查詢警報">' +
                         '</form>'
                 })
                 //Then with the error genereted...
@@ -74,8 +74,6 @@
                 });
         }
     </script>
-
-
     {% endblock %}
 </body>
 

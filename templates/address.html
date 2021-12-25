@@ -1,43 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Box</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"
-        id="bootstrap-css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-</head>
+{% include "header.html" %}
 
 <body>
 
-    <div class="container">
-        {% extends 'nav.html' %}
-
-        {% block content %}
+    <div class="container my-col">
         <div class="row">
+            {% extends 'nav.html' %}
+            {% block content %}
             <div class="col-md-12">
                 <p>
-                <h2>Select box</h2>
+                <h4>請選擇地區</h4>
                 </p>
                 <form action="/address/result" method="POST">
                     {{ form.csrf_token }}
                     <div class="form-group">
-                        <label for="city">City:</label>
+                        <label for="city">縣市:</label>
                         {{ form.city(class="form-control") }}
                     </div>
                     <div class="form-group">
-                        <label for="town">Town:</label>
+                        <label for="town">鄉鎮市區:</label>
                         {{ form.town(class="form-control") }}
                     </div>
-                    <input type="submit" class="btn btn-success btn-lg">
+                    <br>
+                    <input type="submit" class="btn btn-success btn-lg" value="查詢警報">
                 </form>
-                <br>
-                <input type="button" class="btn btn-success btn-lg" onclick="location.href='/'"
-                    value="Go back to index">
             </div>
         </div>
     </div>
@@ -59,6 +47,9 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
     {% endblock %}
 </body>
 

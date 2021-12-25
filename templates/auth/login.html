@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
+{% include "header.html" %}
 
 <body>
-    {% extends 'nav.html' %}
-    {% block header %}
-    <h3>{% block title %}登入{% endblock %}</h3>
-    {% endblock %}
-    {% block content %}
-    <form method="post">
-        <label for="email">Email</label>
-        <input name="email" id="email" required>
-        <label for="password">密碼</label>
-        <input type="password" name="password" id="password" required>
-        <input type="submit" value="登入">
-    </form>
-    {% endblock %}
+    <div class="container my-col">
+        <div class="row">
+            {% extends 'nav.html' %}
+            {% block header %}
+            <div class="col-md-12">
+                <h3>{% block title %}登入{% endblock %}</h3>
+                {% endblock %}
+                {% block content %}
+                <div class="form-group">
+                    <form method="post">
+                        <label for="email">Email</label>
+                        <input name="email" id="email" required>
+                        <label for="password">密碼</label>
+                        <input type="password" name="password" id="password" required>
+                        <input class="btn my-btn" type="submit" value="登入">
+                    </form>
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

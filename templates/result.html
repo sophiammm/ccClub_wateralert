@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
-</head>
+{% include "header.html" %}
 
 <body>
-    {% extends 'nav.html' %}
-    {% block content %}
-    <h1>搜尋結果</h1>
-    <h2>目前位置:{{address}}</h2>
-    {% if lat and lon %}
-    <h4>緯度:{{lat}}</h4>
-    <h4>經度:{{lon}}</h4>
-    {% endif %}
-    <h3>此區域的水情狀況⬇</h3>
-    <div>
-        <h3>河川:</h3>
-        {% for water_msg in water_msgs %}
-        <p>{{water_msg}}</p>
-        {% endfor %}
+    <div class="container my-col">
+        <div class="row">
+            {% extends 'nav.html' %}
+            <div class="col-md-12">
+                {% block content %}
+                <h1>搜尋結果</h1>
+                <h2>目前位置: {{address}}</h2>
+                {% if lat and lon %}
+                <h4>緯度:{{lat}}</h4>
+                <h4>經度:{{lon}}</h4>
+                {% endif %}
+                <h3>此區域的水情狀況⬇</h3>
+                <div class="form-group">
+                    <h3>河川:</h3>
+                    {% for water_msg in water_msgs %}
+                    <p>{{water_msg}}</p>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="form-group">
+                    <h3>雨勢:</h3>
+                    {% for rain_msg in rain_msgs %}
+                    <p>{{rain_msg}}</p>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="form-group">
+                    <h3>水庫:</h3>
+                    {% for reservoir_msg in reservoir_msgs %}
+                    <p>{{reservoir_msg}}</p>
+                    {% endfor %}
+                </div>
+                {% endblock %}
+            </div>
+        </div>
     </div>
-    <br>
-    <div>
-        <h3>雨勢:</h3>
-        {% for rain_msg in rain_msgs %}
-        <p>{{rain_msg}}</p>
-        {% endfor %}
-    </div>
-    <br>
-    <div>
-        <h3>水庫:</h3>
-        {% for reservoir_msg in reservoir_msgs %}
-        <p>{{reservoir_msg}}</p>
-        {% endfor %}
-    </div>
-    <input type="button" onclick="location.href='/'" value="回首頁">
-    {% endblock %}
+
 </body>
 
 </html>
