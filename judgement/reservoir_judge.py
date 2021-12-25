@@ -2,7 +2,6 @@ import sys
 sys.path.append("../")
 
 from datetime import datetime
-from db_operator.base_manager import PostgresBaseManager
 from db_operator.read_from_db import read
 
 
