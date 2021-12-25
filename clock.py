@@ -50,24 +50,24 @@ def save_warn_from_wra():
     update_reservoir_warning()
 
 
-@sched.scheduled_job('interval', id='send_warn', minutes=2, jitter=120, misfire_grace_time=180)
-def send_mail():
-    with app.app_context():
-        usr_list = get_usr()
-        for usr in usr_list:
-            lat = usr[1]
-            lon = usr[2]
-            usr_address = gps_to_address((lat, lon))
-            usr_town_code = read_town_code(usr_address[:3], usr_address[3:])
-            water_condition = input_location(usr_town_code, lat, lon)
-            if water_condition["water"] == '無警戒。' and water_condition["rain"] == '無警戒。' and water_condition["reservoir"] == '無警戒。':
-                continue
-            else:
-                sql = f"SELECT usrname, email from Usr WHERE id={usr[0]};"
-                usr_detail = read_one(sql)
-                info = f"登記地區有水情警報\n請提高警覺\n警報細節如下⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}"
-                usr_mail = usr_detail["email"]
-                send_warn(usr_mail, info)
+# @sched.scheduled_job('interval', id='send_warn', minutes=10, jitter=120, misfire_grace_time=180)
+# def send_mail():
+#     with app.app_context():
+#         usr_list = get_usr()
+#         for usr in usr_list:
+#             lat = usr[1]
+#             lon = usr[2]
+#             usr_address = gps_to_address((lat, lon))
+#             usr_town_code = read_town_code(usr_address[:3], usr_address[3:])
+#             water_condition = input_location(usr_town_code, lat, lon)
+#             if water_condition["water"] == '無警戒。' and water_condition["rain"] == '無警戒。' and water_condition["reservoir"] == '無警戒。':
+#                 continue
+#             else:
+#                 sql = f"SELECT usrname, email from Usr WHERE id={usr[0]};"
+#                 usr_detail = read_one(sql)
+#                 info = f"登記地區有水情警報\n請提高警覺\n警報細節如下⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}"
+#                 usr_mail = usr_detail["email"]
+#                 send_warn(usr_mail, info)
 
 
 sched.start()
