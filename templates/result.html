@@ -14,8 +14,10 @@
                 {% if lat and lon %}
                 <h4>緯度:{{lat}}</h4>
                 <h4>經度:{{lon}}</h4>
-                {% endif %}
+                <h3>此區域的半徑5公里內的水情狀況⬇</h3>
+                {% else %}
                 <h3>此區域的水情狀況⬇</h3>
+                {% endif %}
                 <div class="form-group">
                     <h3>河川:</h3>
                     {% for water_msg in water_msgs %}
