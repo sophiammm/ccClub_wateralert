@@ -160,7 +160,7 @@ def handle_message_location(event):
         msg = "⚠️請重新發送位置資訊。"
     else:
         water_condition = input_location(user_town_code, latitude, longitude)
-        msg = f"您輸入的是: \n{get_message}\n\n此區域的水情狀況⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}"
+        msg = f"您輸入的是: \n{get_message}\n\n目前位置方圓5公里內的水情狀況⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}"
     # Send To Line
     reply = TextSendMessage(
         text=msg)
