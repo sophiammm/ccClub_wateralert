@@ -67,7 +67,7 @@ def send_mail():
                 sql = f"SELECT usrname, email from Usr WHERE id={usr[0]};"
                 usr_detail = read_one(sql)
                 url = "https://wateralert.herokuapp.com/"
-                info = f"您的登記地區:\n{usr_address}\n目前有發布水情警報\n請提高警覺\n警報細節如下⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}\n若需更新位置資訊\n請至Water Alert網站: {url}\n如欲取消警示通知\n請將帳號登出"
+                info = f"您的登記地區:\n{usr_address}\n目前有發布水情警報\n請提高警覺\n警報細節如下⬇\n\n河川: \n{water_condition['water']}\n\n雨勢: \n{water_condition['rain']}\n\n水庫: \n{water_condition['reservoir']}\n\n\n若需更新位置資訊\n請至Water Alert網站: {url}\n如欲取消警示通知\n請將帳號登出"
                 usr_mail = usr_detail["email"]
                 send_warn(usr_mail, info)
 
