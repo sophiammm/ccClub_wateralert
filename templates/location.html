@@ -20,9 +20,9 @@
                     <br>
                     <div style="display: flex;justify-content: space-around;align-items: center;flex-wrap: wrap;">
                         {% if g.user %}
-                        <button onclick="getLocation()" class="btn btn-success btn-lg">更新使用者所在位置</button>
+                        <input class="btn btn-success btn-lg" type="button" value="更新使用者所在位置" onclick="getLocation()">
                         {% else %}
-                        <button onclick="getLocation()" class="btn btn-success btn-lg">開始定位</button>
+                        <input class="btn btn-success btn-lg" type="button" value="開始定位" onclick="getLocation()">
                         {% endif %}
                     </div>
                     <br>
