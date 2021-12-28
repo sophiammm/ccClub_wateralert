@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand mb-0 h1">Water Alert 水情警示器</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -35,9 +35,6 @@
 
 
 <section class="content">
-    <header>
-        {% block header %}{% endblock %}
-    </header>
     {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
     {% endfor %}

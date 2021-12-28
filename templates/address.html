@@ -4,30 +4,33 @@
 {% include "header.html" %}
 
 <body>
-
-    <div class="container my-col">
-        <div class="row">
-            {% extends 'nav.html' %}
-            {% block content %}
+    <div>
+        {% extends 'nav.html' %}
+        {% block content %}
+        <section class="content"
+            style="background-image: url(https://cdn.pixabay.com/photo/2015/11/06/23/32/reservoir-1030292_960_720.jpg);min-height: 100vh;background-size: cover;padding-top: 60px;">
             <div class="col-md-12">
-                <p>
-                <h4>請選擇地區</h4>
-                </p>
-                <form action="/address/result" method="POST">
-                    {{ form.csrf_token }}
-                    <div class="form-group">
-                        <label for="city">縣市:</label>
-                        {{ form.city(class="form-control") }}
-                    </div>
-                    <div class="form-group">
-                        <label for="town">鄉鎮市區:</label>
-                        {{ form.town(class="form-control") }}
-                    </div>
-                    <br>
-                    <input type="submit" class="btn btn-success btn-lg" value="查詢警報">
-                </form>
+                <div
+                    style="min-height: 20vh;width: 80%;background: rgba(255,255,255,0.4);margin: 0 auto;padding: 50px 10px;">
+                    <h4
+                        style="text-align: center;margin-bottom: 30px;font-size: 32px;font-weight: bold;color: rgba(0,0,0,0.8);">
+                        請選擇地區</h4>
+                    <form action="/address/result" method="POST">
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                            <label for="city">縣市:</label>
+                            {{ form.city(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="town">鄉鎮市區:</label>
+                            {{ form.town(class="form-control") }}
+                        </div>
+                        <br>
+                        <input type="submit" class="btn btn-success btn-lg" value="查詢警報">
+                    </form>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script>

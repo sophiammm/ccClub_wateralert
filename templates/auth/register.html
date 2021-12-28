@@ -4,31 +4,35 @@
 {% include "header.html" %}
 
 <body>
-    <div class="container my-col">
-        <div class="row">
-            {% extends 'nav.html' %}
-            {% block header %}
-            <div class="col-md-12">
-                <h3>{% block title %}註冊{% endblock %}</h3>
-                {% endblock %}
-
-                {% block content %}
-                <div class="form-group">
-                    <form method="post">
-                        <label for="username">使用者名稱</label>
-                        <input name="username" id="username" required>
-                        <label for="email">Email:</label>
-                        <input name="email" id="email" required>
-                        <label for="password">密碼</label>
-                        <input type="password" name="password" id="password" required>
-                        <input class="btn my-btn" type="submit" value="提交">
-                    </form>
-                </div>
-                {% endblock %}
+    <div>
+        {% extends 'nav.html' %}
+        {% block content %}
+        <section class="content"
+            style="background-image: url(https://cdn.pixabay.com/photo/2020/07/20/13/03/dam-5422929_960_720.jpg);min-height: 100vh;background-size: cover;padding-top: 60px;">
+            <div style="padding: 50px;">
+                <form method="post" style="padding: 20px;background: rgba(255,255,255,0.9);border-radius: 5px;">
+                    <h4
+                        style="text-align: center;margin-bottom: 30px;font-size: 32px;font-weight: bold;color: rgba(0,0,0,0.8);">
+                        註冊</h4>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">使用者名稱</label>
+                        <input name="username" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密碼</label>
+                        <input type="password" name="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">註冊</button>
+                </form>
             </div>
-        </div>
+        </section>
+        {% endblock %}
     </div>
-
 </body>
 
 </html>
