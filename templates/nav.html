@@ -10,7 +10,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    <a class="nav-link active" aria-current="page" href="/">首頁</a>
                 </li>
                 {% if g.user %}
                 <li class="nav-item">
@@ -31,8 +31,6 @@
         </div>
     </div>
 </nav>
-
-
 
 <section class="content">
     {% for message in get_flashed_messages() %}

@@ -44,15 +44,15 @@ def register():
         error = None
 
         if not username:
-            error = 'Username is required.'
+            error = '請填入使用者名稱'
         elif not email:
-            error = 'Email is required.'
+            error = '請填入Email'
         elif not password:
-            error = 'Password is required.'
+            error = '請填入密碼'
         try:
             cur.execute('SELECT id FROM Usr WHERE email = (%s);', (email,))
             if cur.fetchone() is not None:
-                error = 'Email {} is already registered.'.format(email)
+                error = 'Email: {} 已經被註冊過了'.format(email)
 
             if error is None:
                 cur.execute(
@@ -91,10 +91,8 @@ def login():
             user = cur.fetchone()
             cur.close()
 
-        if user is None:
-            error = 'Incorrect email.'
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
+        if user is None or not check_password_hash(user['password'], password):
+            error = 'Email或密碼錯誤，請重新輸入'
 
         if error is None:
             session.clear()
