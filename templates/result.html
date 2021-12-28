@@ -5,42 +5,46 @@
 
 <body>
     <div>
-        <div class="row">
-            {% extends 'nav.html' %}
+        {% extends 'nav.html' %}
+        {% block content %}
+        <section class="content"
+            style="background-image: url(https://cdn.pixabay.com/photo/2015/11/06/23/32/reservoir-1030292_960_720.jpg);min-height: 100vh;background-size: cover;padding-top: 60px;">
             <div class="col-md-12">
-                {% block content %}
-                <h1>搜尋結果</h1>
-                <h2>目前位置: {{address}}</h2>
-                {% if lat and lon %}
-                <h4>緯度:{{lat}}</h4>
-                <h4>經度:{{lon}}</h4>
-                <h3>此區域半徑5公里內的水情狀況⬇</h3>
-                {% else %}
-                <h3>此區域的水情狀況⬇</h3>
-                {% endif %}
-                <div class="form-group">
-                    <h3>河川:</h3>
-                    {% for water_msg in water_msgs %}
-                    <p>{{water_msg}}</p>
-                    {% endfor %}
+                <div
+                    style="min-height: 20vh;width: 80%;background: rgba(255,255,255,0.4);margin: 0 auto;padding: 50px 10px;">
+                    <h1>搜尋結果</h1>
+                    <h2>目前位置: {{address}}</h2>
+                    {% if lat and lon %}
+                    <h4>緯度:{{lat}}</h4>
+                    <h4>經度:{{lon}}</h4>
+                    <h3>此區域半徑5公里內的水情狀況⬇</h3>
+                    {% else %}
+                    <h3>此區域的水情狀況⬇</h3>
+                    {% endif %}
+                    <div class="form-group">
+                        <h3>河川:</h3>
+                        {% for water_msg in water_msgs %}
+                        <p>{{water_msg}}</p>
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <h3>雨勢:</h3>
+                        {% for rain_msg in rain_msgs %}
+                        <p>{{rain_msg}}</p>
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <h3>水庫:</h3>
+                        {% for reservoir_msg in reservoir_msgs %}
+                        <p>{{reservoir_msg}}</p>
+                        {% endfor %}
+                    </div>
                 </div>
-                <br>
-                <div class="form-group">
-                    <h3>雨勢:</h3>
-                    {% for rain_msg in rain_msgs %}
-                    <p>{{rain_msg}}</p>
-                    {% endfor %}
-                </div>
-                <br>
-                <div class="form-group">
-                    <h3>水庫:</h3>
-                    {% for reservoir_msg in reservoir_msgs %}
-                    <p>{{reservoir_msg}}</p>
-                    {% endfor %}
-                </div>
-                {% endblock %}
             </div>
-        </div>
+        </section>
+        {% endblock %}
     </div>
 </body>
 
