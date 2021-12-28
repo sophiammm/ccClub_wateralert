@@ -17,7 +17,8 @@
                             style="text-align: center;margin-bottom: 30px;font-size: 32px;font-weight: bold;color: rgba(0,0,0,0.8);">
                             按下按鈕定位</h4>
                     </div>
-                    <div style="display: flex;justify-content: space-around;align-items: center;flex-wrap: wrap;">
+                    <div onclick=""
+                        style="display: flex;justify-content: space-around;align-items: center;flex-wrap: wrap;">
                         {% if g.user %}
                         <button class="btn btn-success btn-lg" onclick="getLocation()">更新使用者所在位置</button>
                         {% else %}
